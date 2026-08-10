@@ -1,0 +1,30 @@
+# Dependencies & build
+web/node_modules/
+web/.next/
+web/out/
+web/build/
+web/.vercel/
+web/*.tsbuildinfo
+web/next-env.d.ts
+
+# Env & secrets
+.env
+.env.*
+!**/.env.example
+
+# Logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+*.pem
+
+# Editor
+.idea/
+.vscode/
+*.swp
+
+# Scripts temp
+web/scripts/toyota-images.json
+web/public/fleet/*-raw.webp
+web/public/fleet/_preview-*
