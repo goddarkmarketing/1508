@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema, type LoginFormValues } from "@/lib/validations";
+import { authenticate, getClientSession, setClientSession } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,19 +24,20 @@ export function LoginForm() {
     defaultValues: { email: "", password: "" },
   });
 
+  useEffect(() => {
+    if (getClientSession()) {
+      router.replace("/admin");
+    }
+  }, [router]);
+
   async function onSubmit(values: LoginFormValues) {
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
+      const user = authenticate(values.email, values.password);
+      if (!user) throw new Error("Email or password is incorrect");
+      setClientSession(user);
       toast.success("Signed in");
       router.push("/admin");
-      router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");
     } finally {
@@ -47,12 +49,26 @@ export function LoginForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" placeholder="ggmthaimanagement@gmail.com" {...register("email")} disabled={loading} />
-        {errors.email ? <p className="text-xs text-destructive">{errors.email.message}</p> : null}
+        <Input
+          id="email"
+          type="email"
+          placeholder="ggmthaimanagement@gmail.com"
+          {...register("email")}
+          disabled={loading}
+        />
+        {errors.email ? (
+          <p className="text-xs text-destructive">{errors.email.message}</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" placeholder="••••••••" {...register("password")} disabled={loading} />
+        <Input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          {...register("password")}
+          disabled={loading}
+        />
         {errors.password ? (
           <p className="text-xs text-destructive">{errors.password.message}</p>
         ) : null}

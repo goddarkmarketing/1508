@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { createInquiry } from "@/lib/inquiry-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,24 +39,16 @@ export function QuickQuoteForm({
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          inquiryType: "tour",
-          destinationSlug: destinationSlug || undefined,
-          pax: Number.isFinite(paxNumber) && paxNumber! > 0 ? paxNumber : undefined,
-          message: `Quick quote request from homepage for ${destinationName}${
-            paxNumber ? ` · ${paxNumber} pax` : ""
-          }. Please contact with available package options.`,
-        }),
+      createInquiry({
+        name: name.trim(),
+        email: email.trim(),
+        inquiryType: "tour",
+        destinationSlug: destinationSlug || undefined,
+        pax: Number.isFinite(paxNumber) && paxNumber! > 0 ? paxNumber : undefined,
+        message: `Quick quote request from homepage for ${destinationName}${
+          paxNumber ? ` · ${paxNumber} pax` : ""
+        }. Please contact with available package options.`,
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to send request");
-      }
       toast.success("Quote request sent");
       router.push("/inquire/success");
     } catch (error) {
@@ -135,9 +129,9 @@ export function QuickQuoteForm({
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
           Need more details? Use the full{" "}
-          <a href="/inquire" className="text-primary underline-offset-2 hover:underline">
+          <Link href="/inquire" className="text-primary underline-offset-2 hover:underline">
             inquiry form
-          </a>
+          </Link>
           .
         </p>
       </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -10,17 +13,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { listInquiries } from "@/data/inquiries";
 import { getTour } from "@/data/tours";
+import { loadInquiries } from "@/lib/inquiry-store";
+import type { Inquiry } from "@/types";
 
 export default function AdminInquiriesPage() {
-  const inquiries = listInquiries();
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+
+  const refresh = useCallback(() => {
+    setInquiries(loadInquiries());
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   return (
     <div>
       <PageHeader
         title="Inquiries"
-        description="Incoming quote requests from the public website form."
+        description="Incoming quote requests from the public website form (stored in this browser for the static demo)."
       />
 
       {inquiries.length === 0 ? (
@@ -65,7 +77,11 @@ export default function AdminInquiriesPage() {
                       <StatusBadge status={item.status} />
                     </TableCell>
                     <TableCell className="text-right">
-                      <InquiryActions id={item.id} status={item.status} />
+                      <InquiryActions
+                        id={item.id}
+                        status={item.status}
+                        onUpdated={refresh}
+                      />
                     </TableCell>
                   </TableRow>
                 );

@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { inquirySchema, type InquiryFormValues } from "@/lib/validations";
+import { createInquiry } from "@/lib/inquiry-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,15 +60,15 @@ export function InquiryForm({
   async function onSubmit(values: InquiryFormValues) {
     setSubmitting(true);
     try {
-      const res = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+      createInquiry({
+        ...values,
+        phone: values.phone || undefined,
+        company: values.company || undefined,
+        tourSlug: values.tourSlug || undefined,
+        destinationSlug: values.destinationSlug || undefined,
+        travelDate: values.travelDate || undefined,
+        pax: values.pax || undefined,
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to submit inquiry");
-      }
       toast.success("Inquiry sent", {
         description: "Our team will contact you shortly.",
       });

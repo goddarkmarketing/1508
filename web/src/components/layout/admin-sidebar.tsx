@@ -10,6 +10,7 @@ import {
   MapPin,
   Settings,
 } from "lucide-react";
+import { clearClientSession } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
@@ -32,10 +33,9 @@ export function AdminSidebar({
   const pathname = usePathname();
   const router = useRouter();
 
-  async function logout() {
-    await fetch("/api/auth/login", { method: "DELETE" });
+  function logout() {
+    clearClientSession();
     router.push("/login");
-    router.refresh();
   }
 
   return (

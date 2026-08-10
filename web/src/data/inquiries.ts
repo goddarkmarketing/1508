@@ -1,6 +1,6 @@
 import type { Inquiry } from "@/types";
 
-const seed: Inquiry[] = [
+export const seedInquiries: Inquiry[] = [
   {
     id: "inq-1001",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
@@ -29,32 +29,13 @@ const seed: Inquiry[] = [
   },
 ];
 
-let inquiries: Inquiry[] = [...seed];
-
+/** @deprecated Prefer client inquiry store for static export builds. */
 export function listInquiries() {
-  return [...inquiries].sort(
+  return [...seedInquiries].sort(
     (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
   );
 }
 
 export function getInquiry(id: string) {
-  return inquiries.find((i) => i.id === id);
-}
-
-export function createInquiry(
-  input: Omit<Inquiry, "id" | "createdAt" | "status">,
-) {
-  const item: Inquiry = {
-    ...input,
-    id: `inq-${Date.now()}`,
-    createdAt: new Date().toISOString(),
-    status: "new",
-  };
-  inquiries = [item, ...inquiries];
-  return item;
-}
-
-export function updateInquiryStatus(id: string, status: Inquiry["status"]) {
-  inquiries = inquiries.map((i) => (i.id === id ? { ...i, status } : i));
-  return getInquiry(id);
+  return seedInquiries.find((i) => i.id === id);
 }

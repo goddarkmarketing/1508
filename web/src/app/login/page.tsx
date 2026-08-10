@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/forms/login-form";
 import { company } from "@/data/company";
-import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Admin login",
 };
 
-export default async function LoginPage() {
-  const session = await getSession();
-  if (session) redirect("/admin");
-
+export default function LoginPage() {
   return (
     <div className="flex min-h-svh items-center justify-center bg-secondary/40 px-4 py-10">
       <div className="w-full max-w-md rounded-2xl border bg-card p-8 shadow-sm">

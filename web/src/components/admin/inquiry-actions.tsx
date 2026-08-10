@@ -3,27 +3,27 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { InquiryStatus } from "@/types";
+import { updateInquiryStatus } from "@/lib/inquiry-store";
 
 export function InquiryActions({
   id,
   status,
+  onUpdated,
 }: {
   id: string;
   status: InquiryStatus;
+  onUpdated?: () => void;
 }) {
   const router = useRouter();
 
-  async function update(next: InquiryStatus) {
-    const res = await fetch(`/api/inquiries/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: next }),
-    });
-    if (!res.ok) {
+  function update(next: InquiryStatus) {
+    const updated = updateInquiryStatus(id, next);
+    if (!updated) {
       toast.error("Unable to update status");
       return;
     }
     toast.success("Status updated");
+    onUpdated?.();
     router.refresh();
   }
 

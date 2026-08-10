@@ -1,9 +1,16 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { company } from "@/data/company";
-import { getSession } from "@/lib/auth";
+import { getClientSession, type SessionUser } from "@/lib/auth";
 
-export default async function AdminSettingsPage() {
-  const session = await getSession();
+export default function AdminSettingsPage() {
+  const [session, setSession] = useState<SessionUser | null>(null);
+
+  useEffect(() => {
+    setSession(getClientSession());
+  }, []);
 
   return (
     <div>

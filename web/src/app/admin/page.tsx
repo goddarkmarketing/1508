@@ -1,24 +1,34 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { DashboardStat } from "@/components/shared/dashboard-stat";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
-import { listInquiries } from "@/data/inquiries";
 import { destinations } from "@/data/destinations";
 import { getPublishedTours } from "@/data/tours";
-import { getSession } from "@/lib/auth";
+import { getClientSession } from "@/lib/auth";
+import { loadInquiries } from "@/lib/inquiry-store";
+import type { Inquiry } from "@/types";
 
-export default async function AdminDashboardPage() {
-  const session = await getSession();
+export default function AdminDashboardPage() {
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [name, setName] = useState("team");
   const tours = getPublishedTours();
-  const inquiries = listInquiries();
+
+  useEffect(() => {
+    setInquiries(loadInquiries());
+    setName(getClientSession()?.name ?? "team");
+  }, []);
+
   const newInquiries = inquiries.filter((i) => i.status === "new");
 
   return (
     <div>
       <PageHeader
         title="Dashboard"
-        description={`Welcome back, ${session?.name ?? "team"}. Focus on pending inquiries and live packages.`}
+        description={`Welcome back, ${name}. Focus on pending inquiries and live packages.`}
         actions={
           <Button asChild>
             <Link href="/admin/inquiries">Review inquiries</Link>

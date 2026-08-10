@@ -1,14 +1,36 @@
-import { redirect } from "next/navigation";
-import { AdminSidebar } from "@/components/layout/admin-sidebar";
-import { getSession } from "@/lib/auth";
+"use client";
 
-export default async function AdminLayout({
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { AdminSidebar } from "@/components/layout/admin-sidebar";
+import { getClientSession, type SessionUser } from "@/lib/auth";
+
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
-  if (!session) redirect("/login");
+  const router = useRouter();
+  const [session, setSession] = useState<SessionUser | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const current = getClientSession();
+    if (!current) {
+      router.replace("/login");
+      return;
+    }
+    setSession(current);
+    setReady(true);
+  }, [router]);
+
+  if (!ready || !session) {
+    return (
+      <div className="flex min-h-svh items-center justify-center text-sm text-muted-foreground">
+        Checking session...
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-svh bg-muted/30">
