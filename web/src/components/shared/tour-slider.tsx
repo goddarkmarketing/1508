@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { SiteImage as Image } from "@/components/shared/site-image";
 import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Clock3 } from "lucide-react";
 import type { TourPackage } from "@/types";

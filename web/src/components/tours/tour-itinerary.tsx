@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "@/components/shared/site-image";
 import { Coffee, CircleDot, Soup, UtensilsCrossed } from "lucide-react";
 import type { ItineraryDay } from "@/types";
 import {

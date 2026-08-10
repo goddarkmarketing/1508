@@ -3,6 +3,7 @@ import { Manrope, Sora } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { company } from "@/data/company";
+import { withBasePath } from "@/lib/base-path";
 import "./globals.css";
 
 const sans = Manrope({
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
   },
   description: company.description,
   icons: {
-    icon: [{ url: "/brand/logo.png", type: "image/png" }],
-    apple: [{ url: "/brand/logo.png", type: "image/png" }],
+    icon: [{ url: withBasePath("/brand/logo.png"), type: "image/png" }],
+    apple: [{ url: withBasePath("/brand/logo.png"), type: "image/png" }],
   },
 };
 

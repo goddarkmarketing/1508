@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "@/components/shared/site-image";
 import Link from "next/link";
 import { Mail, Phone } from "lucide-react";
 import { company, navigation } from "@/data/company";

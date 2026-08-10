@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "@/components/shared/site-image";
 import Link from "next/link";
 import { ArrowUpRight, Clock3, MapPin } from "lucide-react";
 import type { TourPackage } from "@/types";
