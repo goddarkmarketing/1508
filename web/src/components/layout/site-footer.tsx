@@ -13,7 +13,7 @@ const serviceLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t bg-navy text-navy-foreground">
+    <footer className="border-t bg-navy text-navy-foreground" data-feedback-id="site-footer">
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.9fr_0.9fr_1.1fr]">
         <div className="space-y-4 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center gap-3">

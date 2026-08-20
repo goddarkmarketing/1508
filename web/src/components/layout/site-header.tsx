@@ -51,7 +51,7 @@ export function SiteHeader() {
   const [toursOpen, setToursOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="sticky top-0 z-50" data-feedback-id="site-header">
       <div className="border-b border-border/80 bg-white">
         <div className="container-page flex h-10 items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-0 text-[11px] tracking-wide text-navy/70 sm:text-xs">
@@ -139,7 +139,7 @@ export function SiteHeader() {
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex">
+          <nav className="hidden items-center gap-1 lg:flex" data-feedback-id="site-navigation">
             {navigation.map((item) => {
               if (item.href === "/tours") {
                 return (

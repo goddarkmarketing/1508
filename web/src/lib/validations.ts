@@ -21,3 +21,26 @@ export const loginSchema = z.object({
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
+
+export const feedbackSchema = z.object({
+  comment: z.string().min(5, "กรุณาระบุรายละเอียดอย่างน้อย 5 ตัวอักษร"),
+  category: z.enum([
+    "text",
+    "image",
+    "layout",
+    "color",
+    "function",
+    "mobile",
+    "other",
+  ]),
+  priority: z.enum(["low", "medium", "high"]),
+  customerName: z.string().min(2, "กรุณาระบุชื่อ"),
+});
+
+export type FeedbackFormValues = z.infer<typeof feedbackSchema>;
+
+export const previewPasswordSchema = z.object({
+  password: z.string().min(4, "กรุณากรอกรหัสผ่าน"),
+});
+
+export type PreviewPasswordFormValues = z.infer<typeof previewPasswordSchema>;

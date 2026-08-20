@@ -26,7 +26,11 @@ export function TourBookingCard({ tour }: { tour: TourPackage }) {
   ];
 
   return (
-    <aside className="h-fit self-start overflow-hidden rounded-2xl border border-border/80 bg-white shadow-[0_12px_32px_rgba(0,51,102,0.08)] lg:sticky lg:top-28">
+    <aside
+      className="h-fit self-start overflow-hidden rounded-2xl border border-border/80 bg-white shadow-[0_12px_32px_rgba(0,51,102,0.08)] lg:sticky lg:top-28"
+      data-feedback-id="package-price"
+      data-component="TourBookingCard"
+    >
       <div className="border-b bg-navy px-5 py-4 text-white">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
           Booking summary

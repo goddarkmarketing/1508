@@ -29,7 +29,7 @@ export default function AdminInquiriesPage() {
   }, [refresh]);
 
   return (
-    <div>
+    <div data-feedback-id="booking-table">
       <PageHeader
         title="Inquiries"
         description="Incoming quote requests from the public website form (stored in this browser for the static demo)."

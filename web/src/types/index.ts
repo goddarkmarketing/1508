@@ -74,3 +74,71 @@ export interface TransferRate {
 }
 
 export type UserRole = "admin" | "sales" | "viewer";
+
+export type FeedbackCategory =
+  | "text"
+  | "image"
+  | "layout"
+  | "color"
+  | "function"
+  | "mobile"
+  | "other";
+
+export type FeedbackPriority = "low" | "medium" | "high";
+
+export type FeedbackStatus = "pending" | "in-progress" | "completed" | "rejected";
+
+export interface FeedbackViewport {
+  width: number;
+  height: number;
+}
+
+export interface FeedbackScrollPosition {
+  x: number;
+  y: number;
+}
+
+export interface FeedbackBoundingRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface FeedbackItem {
+  id: string;
+  page: string;
+  url: string;
+  route: string;
+  section: string;
+  feedbackId: string;
+  selector: string;
+  elementTag: string;
+  elementText: string;
+  componentName: string;
+  comment: string;
+  category: FeedbackCategory;
+  priority: FeedbackPriority;
+  status: FeedbackStatus;
+  customerName: string;
+  screenshot: string;
+  viewport: FeedbackViewport;
+  scrollPosition: FeedbackScrollPosition;
+  boundingRect: FeedbackBoundingRect;
+  createdAt: string;
+}
+
+export interface FeedbackElementMeta {
+  page: string;
+  url: string;
+  route: string;
+  section: string;
+  feedbackId: string;
+  selector: string;
+  elementTag: string;
+  elementText: string;
+  componentName: string;
+  boundingRect: FeedbackBoundingRect;
+  viewport: FeedbackViewport;
+  scrollPosition: FeedbackScrollPosition;
+}

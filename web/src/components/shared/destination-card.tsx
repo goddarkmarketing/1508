@@ -7,6 +7,8 @@ export function DestinationCard({ destination }: { destination: Destination }) {
     <Link
       href={`/destinations/${destination.slug}`}
       className="group relative block overflow-hidden"
+      data-feedback-id="destination-card"
+      data-component="DestinationCard"
     >
       <div className="relative aspect-square">
         <Image

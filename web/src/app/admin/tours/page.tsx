@@ -15,7 +15,7 @@ import { formatDuration } from "@/lib/format";
 
 export default function AdminToursPage() {
   return (
-    <div>
+    <div data-feedback-id="package-list">
       <PageHeader
         title="Tours"
         description="Catalog sourced from company package materials. Editing can be connected to a database later."

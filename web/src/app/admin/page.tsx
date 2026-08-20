@@ -25,14 +25,19 @@ export default function AdminDashboardPage() {
   const newInquiries = inquiries.filter((i) => i.status === "new");
 
   return (
-    <div>
+    <div data-feedback-id="dashboard-summary">
       <PageHeader
         title="Dashboard"
         description={`Welcome back, ${name}. Focus on pending inquiries and live packages.`}
         actions={
-          <Button asChild>
-            <Link href="/admin/inquiries">Review inquiries</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild>
+              <Link href="/admin/feedback">Review feedback</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/inquiries">Review inquiries</Link>
+            </Button>
+          </div>
         }
       />
 

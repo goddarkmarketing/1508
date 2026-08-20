@@ -81,7 +81,7 @@ export function InquiryForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" data-feedback-id="customer-form">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Full name" required error={errors.name?.message}>
           <Input placeholder="Your name" {...register("name")} disabled={submitting} />

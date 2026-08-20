@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  ClipboardList,
   Inbox,
   LayoutDashboard,
   LogOut,
@@ -20,6 +21,7 @@ const items = [
   { href: "/admin/tours", label: "Tours", icon: Map },
   { href: "/admin/destinations", label: "Destinations", icon: MapPin },
   { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
+  { href: "/admin/feedback", label: "Feedback", icon: ClipboardList },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
@@ -39,7 +41,7 @@ export function AdminSidebar({
   }
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r bg-card">
+    <aside className="flex h-full w-64 flex-col border-r bg-card" data-feedback-id="sidebar-navigation">
       <div className="border-b px-5 py-5">
         <p className="text-sm font-bold">
           <span className="text-brand">GGM</span> Admin

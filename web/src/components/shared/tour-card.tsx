@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button";
 
 export function TourCard({ tour }: { tour: TourPackage }) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card transition hover:border-primary/30 hover:shadow-md sm:rounded-2xl">
+    <article
+      className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card transition hover:border-primary/30 hover:shadow-md sm:rounded-2xl"
+      data-feedback-id="package-card"
+      data-component="TourCard"
+    >
       <Link href={`/tours/${tour.slug}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-muted sm:aspect-[16/10]">
           <Image

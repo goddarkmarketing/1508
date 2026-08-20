@@ -39,7 +39,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative isolate w-full overflow-hidden bg-white">
+      <section className="relative isolate w-full overflow-hidden bg-white" data-feedback-id="home-hero" data-feedback-label="Hero banner">
         <Image
           src="/brand/hero-cover.png"
           alt="GGM Thai Travel — Beautiful destinations and professional travel services"
@@ -54,7 +54,7 @@ export default function HomePage() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white via-white/70 to-transparent sm:h-32" />
       </section>
 
-      <section id="hero-quote" className="border-b bg-white">
+      <section id="hero-quote" className="border-b bg-white" data-feedback-id="home-quick-quote" data-feedback-label="Quick quote">
         <div className="container-page grid items-center gap-10 py-14 lg:grid-cols-2 lg:gap-14 lg:py-20">
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-700">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">
@@ -98,7 +98,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-secondary/40 pt-8 sm:pt-10">
+      <section className="bg-secondary/40 pt-8 sm:pt-10" data-feedback-id="home-featured-tours" data-feedback-label="Featured tours">
         <div className="container-page">
           <div className="rounded-t-[2rem] border border-b-0 bg-white px-4 py-6 shadow-sm sm:rounded-t-[2.5rem] sm:px-6 sm:py-8 lg:px-8">
             <TourSlider tours={featured} />
@@ -106,7 +106,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="relative isolate overflow-hidden border-b">
+      <section className="relative isolate overflow-hidden border-b" data-feedback-id="home-expertise" data-feedback-label="Expertise">
         <Image
           src="/brand/expertise-bg.png"
           alt="GGM Thai Travel expertise across Thailand"
@@ -142,7 +142,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-space border-b bg-white">
+      <section className="section-space border-b bg-white" data-feedback-id="home-values" data-feedback-label="Value pillars">
         <div className="container-page">
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {[
@@ -186,7 +186,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-space">
+      <section className="section-space" data-feedback-id="home-destinations" data-feedback-label="Destinations">
         <div className="container-page">
           <SectionHeader
             eyebrow="Destinations"
@@ -206,7 +206,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-space border-b bg-[#f7f9fc]">
+      <section className="section-space border-b bg-[#f7f9fc]" data-feedback-id="home-fleet" data-feedback-label="Fleet teaser">
         <div className="container-page">
           <SectionHeader
             eyebrow="Fleet"

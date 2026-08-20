@@ -66,6 +66,7 @@ export function LoginForm() {
           id="password"
           type="password"
           placeholder="••••••••"
+          data-sensitive
           {...register("password")}
           disabled={loading}
         />

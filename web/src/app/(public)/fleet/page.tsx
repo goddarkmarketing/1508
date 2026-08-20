@@ -64,7 +64,7 @@ export default function FleetPage() {
         </div>
       </section>
 
-      <section className="section-space border-b bg-white">
+      <section className="section-space border-b bg-white" data-feedback-id="vehicle-list" data-feedback-label="Fleet vehicles">
         <div className="container-page">
           <SectionHeader
             eyebrow="VIP vans"
