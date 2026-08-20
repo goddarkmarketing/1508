@@ -73,7 +73,7 @@ export default function AdminFeedbackPage() {
     <div data-feedback-id="feedback-admin">
       <PageHeader
         title="Website Feedback"
-        description="รายการแก้ไขจากลูกค้าในโหมดตรวจงาน — Export เป็น JSON / Markdown / ZIP สำหรับ Cursor"
+        description="รายการแก้ไขจากลูกค้าในโหมดตรวจงาน — Export เป็น JSON / Markdown / ZIP สำหรับทีมงาน"
         actions={<FeedbackExportButtons items={filtered} />}
       />
 

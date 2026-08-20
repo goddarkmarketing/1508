@@ -97,7 +97,7 @@ export function FeedbackModal() {
       });
       toast.success(`บันทึก ${item.id} แล้ว`, {
         description: screenshot
-          ? "ทีมงานสามารถ Export ไฟล์ไปให้ Cursor แก้ไขได้"
+          ? "ทีมงานสามารถ Export ไฟล์ไปแก้ไขได้"
           : "บันทึกแล้ว (ไม่มีภาพแคปจอ)",
       });
       closeModal();

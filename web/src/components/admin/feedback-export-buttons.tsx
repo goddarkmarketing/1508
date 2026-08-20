@@ -76,11 +76,11 @@ export function FeedbackExportButtons({ items }: { items: FeedbackItem[] }) {
         onClick={() =>
           run(async () => {
             await exportFeedbackPackage(items);
-          }, "ดาวน์โหลด Package สำหรับ Cursor แล้ว")
+          }, "ดาวน์โหลด Package สำหรับทีมงานแล้ว")
         }
       >
         <Download className="size-4" />
-        ส่งให้ Cursor
+        ส่งให้ทีมงาน
       </Button>
     </div>
   );
