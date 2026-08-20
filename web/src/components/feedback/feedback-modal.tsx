@@ -77,10 +77,16 @@ export function FeedbackModal() {
     setSubmitting(true);
     try {
       const nextId = peekNextFeedbackId();
-      const screenshot = await captureFeedbackScreenshot(
-        selectedMeta.boundingRect,
-        nextId,
-      );
+      let screenshot = "";
+      try {
+        screenshot = await captureFeedbackScreenshot(
+          selectedMeta.boundingRect,
+          nextId,
+        );
+      } catch (shotError) {
+        console.warn("[Feedback] screenshot skipped:", shotError);
+      }
+
       const item = createFeedback({
         meta: selectedMeta,
         comment: values.comment,
@@ -90,11 +96,12 @@ export function FeedbackModal() {
         screenshot,
       });
       toast.success(`บันทึก ${item.id} แล้ว`, {
-        description: "ทีมงานสามารถ Export ไฟล์ไปให้ Cursor แก้ไขได้",
+        description: screenshot
+          ? "ทีมงานสามารถ Export ไฟล์ไปให้ Cursor แก้ไขได้"
+          : "บันทึกแล้ว (ไม่มีภาพแคปจอ)",
       });
       closeModal();
     } catch (error) {
-      // Help debugging: show real error in console and surface the message to the user.
       console.error("[Feedback] save failed:", error);
       const message =
         error instanceof Error ? error.message : "ไม่สามารถบันทึก Feedback ได้";
