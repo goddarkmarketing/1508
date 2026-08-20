@@ -60,6 +60,18 @@ function drawAnnotation(
   ctx.fillText(label, badgeX + badgePaddingX, badgeY + 16);
 }
 
+function sanitizeUnsupportedColorFunctions(clonedDoc: Document) {
+  const styleNodes = Array.from(clonedDoc.querySelectorAll("style"));
+  for (const node of styleNodes) {
+    const css = node.textContent;
+    if (!css) continue;
+    if (!css.includes("oklab(") && !css.includes("oklch(")) continue;
+    node.textContent = css
+      .replace(/oklab\([^)]*\)/g, "rgb(128,128,128)")
+      .replace(/oklch\([^)]*\)/g, "rgb(128,128,128)");
+  }
+}
+
 export async function captureFeedbackScreenshot(
   rect: FeedbackBoundingRect,
   feedbackId: string,
@@ -81,6 +93,9 @@ export async function captureFeedbackScreenshot(
       height: document.documentElement.clientHeight,
       scrollX: window.scrollX,
       scrollY: window.scrollY,
+      onclone: (clonedDoc) => {
+        sanitizeUnsupportedColorFunctions(clonedDoc);
+      },
       ignoreElements: (element) =>
         element instanceof Element &&
         (element.hasAttribute("data-feedback-ui") ||
