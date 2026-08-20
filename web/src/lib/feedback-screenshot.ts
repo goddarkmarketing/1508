@@ -61,13 +61,61 @@ function drawAnnotation(
 }
 
 function sanitizeUnsupportedColorFunctions(clonedDoc: Document) {
+  const canvas = clonedDoc.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const tokenRegex = /(oklab\([^\)]*\)|oklch\([^\)]*\))/g;
+
+  function resolveToken(value: string): string {
+    if (!ctx) return value.replace(tokenRegex, "rgb(128,128,128)");
+    return value.replace(tokenRegex, (token) => {
+      try {
+        ctx.fillStyle = token; // let the browser resolve to rgb/rgba()
+        return ctx.fillStyle || "rgb(128,128,128)";
+      } catch {
+        return "rgb(128,128,128)";
+      }
+    });
+  }
+
+  // 1) Fix inline styles (style="" / element.style cssText)
+  const allEls = Array.from(clonedDoc.querySelectorAll("*"));
+  const win = clonedDoc.defaultView;
+  const propertiesToCheck = [
+    "color",
+    "background-color",
+    "border-top-color",
+    "border-right-color",
+    "border-bottom-color",
+    "border-left-color",
+    "border-color",
+    "outline-color",
+  ];
+
+  for (const el of allEls) {
+    const styleAttr = el.getAttribute("style");
+    if (styleAttr && /oklab\(|oklch\(/i.test(styleAttr)) {
+      el.setAttribute("style", resolveToken(styleAttr));
+    }
+
+    // 2) Fix computed styles that html2canvas may still read as oklab()/oklch()
+    if (!win) continue;
+    const cs = win.getComputedStyle(el);
+    for (const prop of propertiesToCheck) {
+      const v = cs.getPropertyValue(prop);
+      if (v && /oklab\(|oklch\(/i.test(v)) {
+        el.style.setProperty(prop, resolveToken(v));
+      }
+    }
+  }
+
+  // 3) Fix inline <style> tags text (best-effort)
   const styleNodes = Array.from(clonedDoc.querySelectorAll("style"));
   for (const node of styleNodes) {
     const css = node.textContent;
     if (!css) continue;
     if (!css.includes("oklab(") && !css.includes("oklch(")) continue;
-    node.textContent = css
-      .replace(/oklab\([^)]*\)/g, "rgb(128,128,128)")
+    node.textContent = css.replace(/oklab\([^)]*\)/g, "rgb(128,128,128)")
       .replace(/oklch\([^)]*\)/g, "rgb(128,128,128)");
   }
 }
