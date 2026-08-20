@@ -73,14 +73,18 @@ export async function captureFeedbackScreenshot(
       allowTaint: true,
       backgroundColor: "#ffffff",
       logging: false,
-      scale: Math.min(window.devicePixelRatio || 1, 2),
+      // Use a smaller scale to reduce memory usage (prevents localStorage failures).
+      scale: 1,
       windowWidth: document.documentElement.clientWidth,
       windowHeight: document.documentElement.clientHeight,
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight,
       scrollX: window.scrollX,
       scrollY: window.scrollY,
       ignoreElements: (element) =>
-        element.hasAttribute("data-feedback-ui") ||
-        element.hasAttribute("data-feedback-mask-overlay"),
+        element instanceof Element &&
+        (element.hasAttribute("data-feedback-ui") ||
+          element.hasAttribute("data-feedback-mask-overlay")),
     });
 
     drawAnnotation(canvas, rect, feedbackId);

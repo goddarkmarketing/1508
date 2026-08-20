@@ -20,7 +20,23 @@ function readAll(): FeedbackItem[] {
 }
 
 function writeAll(items: FeedbackItem[]) {
-  window.localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(items));
+  try {
+    window.localStorage.setItem(
+      FEEDBACK_STORAGE_KEY,
+      JSON.stringify(items),
+    );
+  } catch (error) {
+    // Most common cause is localStorage quota exceeded when screenshots are large.
+    if (error instanceof DOMException) {
+      const name = error.name;
+      if (name === "QuotaExceededError") {
+        throw new Error(
+          "พื้นที่จัดเก็บในเบราว์เซอร์เต็ม (QuotaExceededError) กรุณา Export หรือเคลียร์ Feedback เก่าก่อน แล้วค่อยบันทึกใหม่",
+        );
+      }
+    }
+    throw new Error("ไม่สามารถบันทึก Feedback ลงในเบราว์เซอร์ได้");
+  }
 }
 
 export function loadFeedback(): FeedbackItem[] {

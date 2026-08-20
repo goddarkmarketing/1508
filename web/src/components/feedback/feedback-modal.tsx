@@ -93,8 +93,12 @@ export function FeedbackModal() {
         description: "ทีมงานสามารถ Export ไฟล์ไปให้ Cursor แก้ไขได้",
       });
       closeModal();
-    } catch {
-      toast.error("ไม่สามารถบันทึก Feedback ได้");
+    } catch (error) {
+      // Help debugging: show real error in console and surface the message to the user.
+      console.error("[Feedback] save failed:", error);
+      const message =
+        error instanceof Error ? error.message : "ไม่สามารถบันทึก Feedback ได้";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
