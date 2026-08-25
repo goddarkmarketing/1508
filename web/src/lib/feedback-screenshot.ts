@@ -7,8 +7,8 @@ const SENSITIVE_SELECTORS = [
   'input[autocomplete="one-time-code"]',
 ].join(",");
 
-const MAX_SCREENSHOT_WIDTH = 1280;
-const JPEG_QUALITY = 0.72;
+const MAX_SCREENSHOT_WIDTH = 640;
+const JPEG_QUALITY = 0.58;
 
 function maskSensitiveAreas(root: HTMLElement) {
   const masks: HTMLElement[] = [];

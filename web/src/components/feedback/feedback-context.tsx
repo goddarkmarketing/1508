@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { getClientSession } from "@/lib/auth";
+import { compactFeedbackStorage } from "@/lib/feedback-store";
 import {
   clearPreviewSession,
   hasPreviewSession,
@@ -54,7 +55,11 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
       if (token && verifyPreviewToken(token)) {
         setPreviewSession();
       }
-      setPreviewActive(isPreviewMode());
+      const active = isPreviewMode();
+      setPreviewActive(active);
+      if (active) {
+        void compactFeedbackStorage();
+      }
     };
 
     syncPreview();

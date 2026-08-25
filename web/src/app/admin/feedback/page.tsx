@@ -18,7 +18,8 @@ import {
   categoryLabels,
   priorityLabels,
 } from "@/lib/feedback-export";
-import { loadFeedback } from "@/lib/feedback-store";
+import { clearAllFeedback, loadFeedbackWithScreenshots } from "@/lib/feedback-store";
+import { Button } from "@/components/ui/button";
 import type {
   FeedbackCategory,
   FeedbackItem,
@@ -46,8 +47,8 @@ export default function AdminFeedbackPage() {
   const [priorityFilter, setPriorityFilter] = useState<FeedbackPriority | "">("");
   const [statusFilter, setStatusFilter] = useState<FeedbackStatus | "">("");
 
-  const refresh = useCallback(() => {
-    setItems(loadFeedback());
+  const refresh = useCallback(async () => {
+    setItems(await loadFeedbackWithScreenshots());
   }, []);
 
   useEffect(() => {
@@ -69,12 +70,25 @@ export default function AdminFeedbackPage() {
     });
   }, [items, pageFilter, categoryFilter, priorityFilter, statusFilter]);
 
+  async function handleClearAll() {
+    if (!window.confirm("ลบ Feedback ทั้งหมดในเบราว์เซอร์นี้?")) return;
+    await clearAllFeedback();
+    await refresh();
+  }
+
   return (
     <div data-feedback-id="feedback-admin">
       <PageHeader
         title="Website Feedback"
         description="รายการแก้ไขจากลูกค้าในโหมดตรวจงาน — Export เป็น JSON / Markdown / ZIP สำหรับทีมงาน"
-        actions={<FeedbackExportButtons items={filtered} />}
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <FeedbackExportButtons items={filtered} />
+            <Button type="button" variant="outline" size="sm" onClick={handleClearAll}>
+              ล้าง Feedback เก่า
+            </Button>
+          </div>
+        }
       />
 
       <div className="mb-6 grid gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4">

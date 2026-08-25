@@ -1,3 +1,9 @@
+import {
+  clearFeedbackScreenshots,
+  deleteFeedbackScreenshot,
+  getFeedbackScreenshot,
+  saveFeedbackScreenshot,
+} from "@/lib/feedback-image-store";
 import type {
   FeedbackCategory,
   FeedbackItem,
@@ -8,32 +14,73 @@ import type { FeedbackElementMeta } from "@/types";
 
 export const FEEDBACK_STORAGE_KEY = "ggm_feedback_v1";
 
-function readAll(): FeedbackItem[] {
+type StoredFeedbackItem = Omit<FeedbackItem, "screenshot">;
+
+function readMetadata(): StoredFeedbackItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(FEEDBACK_STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as FeedbackItem[];
+    const parsed = JSON.parse(raw) as Array<
+      StoredFeedbackItem & { screenshot?: string }
+    >;
+    return parsed.map(({ screenshot: _removed, ...item }) => item);
   } catch {
     return [];
   }
 }
 
-function writeAll(items: FeedbackItem[]) {
+function writeMetadata(items: StoredFeedbackItem[]) {
   window.localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(items));
 }
 
-function isQuotaError(error: unknown) {
-  return error instanceof DOMException && error.name === "QuotaExceededError";
-}
+/** Move legacy inline screenshots from localStorage into IndexedDB. */
+export async function compactFeedbackStorage() {
+  if (typeof window === "undefined") return;
+  const raw = window.localStorage.getItem(FEEDBACK_STORAGE_KEY);
+  if (!raw) return;
 
-export function loadFeedback(): FeedbackItem[] {
-  return readAll().sort(
-    (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
+  let parsed: Array<StoredFeedbackItem & { screenshot?: string }>;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return;
+  }
+
+  const hasInlineScreenshots = parsed.some(
+    (item) => typeof item.screenshot === "string" && item.screenshot.length > 80,
+  );
+  if (!hasInlineScreenshots) return;
+
+  for (const item of parsed) {
+    if (item.screenshot && item.screenshot.length > 80) {
+      await saveFeedbackScreenshot(item.id, item.screenshot);
+    }
+  }
+
+  writeMetadata(
+    parsed.map(({ screenshot: _removed, ...item }) => item),
   );
 }
 
-function nextFeedbackId(items: FeedbackItem[]): string {
+export function loadFeedback(): FeedbackItem[] {
+  return readMetadata()
+    .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
+    .map((item) => ({ ...item, screenshot: "" }));
+}
+
+export async function loadFeedbackWithScreenshots(): Promise<FeedbackItem[]> {
+  await compactFeedbackStorage();
+  const items = loadFeedback();
+  return Promise.all(
+    items.map(async (item) => ({
+      ...item,
+      screenshot: (await getFeedbackScreenshot(item.id)) ?? "",
+    })),
+  );
+}
+
+function nextFeedbackId(items: StoredFeedbackItem[]): string {
   const max = items.reduce((acc, item) => {
     const num = Number(item.id.replace(/^FB-/i, ""));
     return Number.isFinite(num) ? Math.max(acc, num) : acc;
@@ -42,20 +89,19 @@ function nextFeedbackId(items: FeedbackItem[]): string {
 }
 
 export function peekNextFeedbackId(): string {
-  return nextFeedbackId(readAll());
+  return nextFeedbackId(readMetadata());
 }
 
 function buildItem(
-  items: FeedbackItem[],
+  items: StoredFeedbackItem[],
   input: {
     meta: FeedbackElementMeta;
     comment: string;
     category: FeedbackCategory;
     priority: FeedbackPriority;
     customerName: string;
-    screenshot: string;
   },
-): FeedbackItem {
+): StoredFeedbackItem {
   return {
     id: nextFeedbackId(items),
     page: input.meta.page,
@@ -72,7 +118,6 @@ function buildItem(
     priority: input.priority,
     status: "pending",
     customerName: input.customerName,
-    screenshot: input.screenshot,
     viewport: input.meta.viewport,
     scrollPosition: input.meta.scrollPosition,
     boundingRect: input.meta.boundingRect,
@@ -80,49 +125,41 @@ function buildItem(
   };
 }
 
-export function createFeedback(input: {
+export async function createFeedback(input: {
   meta: FeedbackElementMeta;
   comment: string;
   category: FeedbackCategory;
   priority: FeedbackPriority;
   customerName: string;
   screenshot: string;
-}): FeedbackItem {
-  const items = readAll();
+}): Promise<FeedbackItem> {
+  await compactFeedbackStorage();
+
+  const items = readMetadata();
   const item = buildItem(items, input);
+  writeMetadata([item, ...items]);
 
-  try {
-    writeAll([item, ...items]);
-    return item;
-  } catch (error) {
-    if (!isQuotaError(error) || !input.screenshot) {
-      if (isQuotaError(error)) {
-        throw new Error(
-          "พื้นที่จัดเก็บในเบราว์เซอร์เต็ม กรุณา Export หรือลบ Feedback เก่าก่อน",
-        );
-      }
-      throw new Error("ไม่สามารถบันทึก Feedback ลงในเบราว์เซอร์ได้");
-    }
-
-    const withoutScreenshot = buildItem(items, { ...input, screenshot: "" });
-    writeAll([withoutScreenshot, ...items]);
-    return withoutScreenshot;
+  if (input.screenshot) {
+    await saveFeedbackScreenshot(item.id, input.screenshot);
   }
+
+  return { ...item, screenshot: input.screenshot };
 }
 
 export function updateFeedbackStatus(id: string, status: FeedbackStatus) {
-  const items = readAll().map((item) =>
-    item.id === id ? { ...item, status } : item,
+  const items = readMetadata().map((entry) =>
+    entry.id === id ? { ...entry, status } : entry,
   );
-  writeAll(items);
-  return items.find((item) => item.id === id) ?? null;
+  writeMetadata(items);
+  return items.find((entry) => entry.id === id) ?? null;
 }
 
-export function deleteFeedback(id: string) {
-  const items = readAll().filter((item) => item.id !== id);
-  writeAll(items);
+export async function deleteFeedback(id: string) {
+  writeMetadata(readMetadata().filter((entry) => entry.id !== id));
+  await deleteFeedbackScreenshot(id);
 }
 
-export function clearAllFeedback() {
-  writeAll([]);
+export async function clearAllFeedback() {
+  writeMetadata([]);
+  await clearFeedbackScreenshots();
 }

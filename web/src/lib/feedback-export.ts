@@ -33,6 +33,10 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+function screenshotExtension(dataUrl: string) {
+  return dataUrl.startsWith("data:image/jpeg") ? "jpg" : "png";
+}
+
 function dataUrlToUint8Array(dataUrl: string) {
   const base64 = dataUrl.split(",")[1] ?? "";
   const binary = atob(base64);
@@ -97,7 +101,8 @@ export async function downloadAllScreenshots(items: FeedbackItem[]) {
 
   for (const item of items) {
     if (!item.screenshot) continue;
-    folder.file(`${item.id}.png`, dataUrlToUint8Array(item.screenshot));
+    const ext = screenshotExtension(item.screenshot);
+    folder.file(`${item.id}.${ext}`, dataUrlToUint8Array(item.screenshot));
   }
 
   const blob = await zip.generateAsync({ type: "blob" });
@@ -111,7 +116,8 @@ export async function exportFeedbackPackage(items: FeedbackItem[]) {
 
   for (const item of items) {
     if (item.screenshot) {
-      images.file(`${item.id}.png`, dataUrlToUint8Array(item.screenshot));
+      const ext = screenshotExtension(item.screenshot);
+      images.file(`${item.id}.${ext}`, dataUrlToUint8Array(item.screenshot));
     }
   }
 

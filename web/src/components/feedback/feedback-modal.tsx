@@ -89,7 +89,7 @@ export function FeedbackModal() {
         console.warn("[Feedback] screenshot skipped:", shotError);
       }
 
-      const item = createFeedback({
+      const item = await createFeedback({
         meta: selectedMeta,
         comment: values.comment,
         category: values.category,
