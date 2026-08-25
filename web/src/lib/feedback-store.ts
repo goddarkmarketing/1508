@@ -20,23 +20,11 @@ function readAll(): FeedbackItem[] {
 }
 
 function writeAll(items: FeedbackItem[]) {
-  try {
-    window.localStorage.setItem(
-      FEEDBACK_STORAGE_KEY,
-      JSON.stringify(items),
-    );
-  } catch (error) {
-    // Most common cause is localStorage quota exceeded when screenshots are large.
-    if (error instanceof DOMException) {
-      const name = error.name;
-      if (name === "QuotaExceededError") {
-        throw new Error(
-          "พื้นที่จัดเก็บในเบราว์เซอร์เต็ม (QuotaExceededError) กรุณา Export หรือเคลียร์ Feedback เก่าก่อน แล้วค่อยบันทึกใหม่",
-        );
-      }
-    }
-    throw new Error("ไม่สามารถบันทึก Feedback ลงในเบราว์เซอร์ได้");
-  }
+  window.localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(items));
+}
+
+function isQuotaError(error: unknown) {
+  return error instanceof DOMException && error.name === "QuotaExceededError";
 }
 
 export function loadFeedback(): FeedbackItem[] {
@@ -57,16 +45,18 @@ export function peekNextFeedbackId(): string {
   return nextFeedbackId(readAll());
 }
 
-export function createFeedback(input: {
-  meta: FeedbackElementMeta;
-  comment: string;
-  category: FeedbackCategory;
-  priority: FeedbackPriority;
-  customerName: string;
-  screenshot: string;
-}): FeedbackItem {
-  const items = readAll();
-  const item: FeedbackItem = {
+function buildItem(
+  items: FeedbackItem[],
+  input: {
+    meta: FeedbackElementMeta;
+    comment: string;
+    category: FeedbackCategory;
+    priority: FeedbackPriority;
+    customerName: string;
+    screenshot: string;
+  },
+): FeedbackItem {
+  return {
     id: nextFeedbackId(items),
     page: input.meta.page,
     url: input.meta.url,
@@ -88,8 +78,36 @@ export function createFeedback(input: {
     boundingRect: input.meta.boundingRect,
     createdAt: new Date().toISOString(),
   };
-  writeAll([item, ...items]);
-  return item;
+}
+
+export function createFeedback(input: {
+  meta: FeedbackElementMeta;
+  comment: string;
+  category: FeedbackCategory;
+  priority: FeedbackPriority;
+  customerName: string;
+  screenshot: string;
+}): FeedbackItem {
+  const items = readAll();
+  const item = buildItem(items, input);
+
+  try {
+    writeAll([item, ...items]);
+    return item;
+  } catch (error) {
+    if (!isQuotaError(error) || !input.screenshot) {
+      if (isQuotaError(error)) {
+        throw new Error(
+          "พื้นที่จัดเก็บในเบราว์เซอร์เต็ม กรุณา Export หรือลบ Feedback เก่าก่อน",
+        );
+      }
+      throw new Error("ไม่สามารถบันทึก Feedback ลงในเบราว์เซอร์ได้");
+    }
+
+    const withoutScreenshot = buildItem(items, { ...input, screenshot: "" });
+    writeAll([withoutScreenshot, ...items]);
+    return withoutScreenshot;
+  }
 }
 
 export function updateFeedbackStatus(id: string, status: FeedbackStatus) {

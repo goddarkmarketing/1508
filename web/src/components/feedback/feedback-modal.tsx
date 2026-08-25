@@ -46,6 +46,7 @@ export function FeedbackModal() {
     modalOpen,
     setModalOpen,
     selectedMeta,
+    selectedElement,
     clearSelection,
     setFeedbackMode,
   } = useFeedback();
@@ -82,6 +83,7 @@ export function FeedbackModal() {
         screenshot = await captureFeedbackScreenshot(
           selectedMeta.boundingRect,
           nextId,
+          selectedElement,
         );
       } catch (shotError) {
         console.warn("[Feedback] screenshot skipped:", shotError);
@@ -96,9 +98,9 @@ export function FeedbackModal() {
         screenshot,
       });
       toast.success(`บันทึก ${item.id} แล้ว`, {
-        description: screenshot
+        description: item.screenshot
           ? "ทีมงานสามารถ Export ไฟล์ไปแก้ไขได้"
-          : "บันทึกแล้ว (ไม่มีภาพแคปจอ)",
+          : "บันทึกแล้ว (ไม่มีภาพ — ข้อมูลข้อความครบ)",
       });
       closeModal();
     } catch (error) {

@@ -7,6 +7,9 @@ const SENSITIVE_SELECTORS = [
   'input[autocomplete="one-time-code"]',
 ].join(",");
 
+const MAX_SCREENSHOT_WIDTH = 1280;
+const JPEG_QUALITY = 0.72;
+
 function maskSensitiveAreas(root: HTMLElement) {
   const masks: HTMLElement[] = [];
   root.querySelectorAll(SENSITIVE_SELECTORS).forEach((node) => {
@@ -31,6 +34,56 @@ function maskSensitiveAreas(root: HTMLElement) {
     masks.push(overlay);
   });
   return masks;
+}
+
+function getCaptureTarget(element: Element | null): HTMLElement {
+  if (element instanceof HTMLElement) {
+    const section = element.closest("section[data-feedback-id], section, main");
+    if (section instanceof HTMLElement) return section;
+    return element;
+  }
+  return document.documentElement;
+}
+
+function toRelativeRect(
+  targetRect: DOMRect,
+  selected: FeedbackBoundingRect,
+): FeedbackBoundingRect {
+  return {
+    x: Math.round(selected.x - targetRect.x),
+    y: Math.round(selected.y - targetRect.y),
+    width: selected.width,
+    height: selected.height,
+  };
+}
+
+function sanitizeCloneStyles(clonedDoc: Document) {
+  const styleNodes = Array.from(clonedDoc.querySelectorAll("style"));
+  for (const node of styleNodes) {
+    const css = node.textContent;
+    if (!css) continue;
+    if (
+      !/oklab\(|oklch\(|color-mix\(/i.test(css)
+    ) {
+      continue;
+    }
+    node.textContent = css
+      .replace(/oklab\([^)]*\)/gi, "rgb(128,128,128)")
+      .replace(/oklch\([^)]*\)/gi, "rgb(128,128,128)")
+      .replace(/color-mix\([^)]*\)/gi, "rgb(128,128,128)");
+  }
+
+  clonedDoc.querySelectorAll("[style]").forEach((node) => {
+    const style = node.getAttribute("style");
+    if (!style || !/oklab\(|oklch\(|color-mix\(/i.test(style)) return;
+    node.setAttribute(
+      "style",
+      style
+        .replace(/oklab\([^)]*\)/gi, "rgb(128,128,128)")
+        .replace(/oklch\([^)]*\)/gi, "rgb(128,128,128)")
+        .replace(/color-mix\([^)]*\)/gi, "rgb(128,128,128)"),
+    );
+  });
 }
 
 function drawAnnotation(
@@ -59,7 +112,17 @@ function drawAnnotation(
   ctx.fillText(label, badgeX + badgePaddingX, badgeY + 16);
 }
 
-/** Minimal annotated placeholder if screenshot capture fails. */
+function compressCanvas(canvas: HTMLCanvasElement): string {
+  const scale = Math.min(1, MAX_SCREENSHOT_WIDTH / canvas.width);
+  const output = document.createElement("canvas");
+  output.width = Math.round(canvas.width * scale);
+  output.height = Math.round(canvas.height * scale);
+  const ctx = output.getContext("2d");
+  if (!ctx) return canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+  ctx.drawImage(canvas, 0, 0, output.width, output.height);
+  return output.toDataURL("image/jpeg", JPEG_QUALITY);
+}
+
 function createFallbackScreenshot(
   rect: FeedbackBoundingRect,
   feedbackId: string,
@@ -76,43 +139,52 @@ function createFallbackScreenshot(
   ctx.fillRect(0, 0, width, height);
   ctx.fillStyle = "#0f172a";
   ctx.font = "bold 18px sans-serif";
-  ctx.fillText(`${feedbackId} · Screenshot unavailable`, 24, 40);
+  ctx.fillText(`${feedbackId} · ภาพตัวอย่าง`, 24, 40);
   ctx.font = "14px sans-serif";
   ctx.fillStyle = "#475569";
-  ctx.fillText("Page capture failed; element bounds marked below.", 24, 68);
+  ctx.fillText("บันทึกตำแหน่งที่เลือกแล้ว (ไม่มีภาพแคปจอเต็มหน้า)", 24, 68);
   drawAnnotation(canvas, rect, feedbackId);
-  return canvas.toDataURL("image/png");
+  return compressCanvas(canvas);
 }
 
 export async function captureFeedbackScreenshot(
   rect: FeedbackBoundingRect,
   feedbackId: string,
+  selectedElement: Element | null,
 ): Promise<string> {
-  // html2canvas-pro supports Tailwind v4 oklab/oklch color functions.
-  const html2canvas = (await import("html2canvas-pro")).default;
+  const target = getCaptureTarget(selectedElement);
+  const targetRect = target.getBoundingClientRect();
+  const relativeRect = toRelativeRect(targetRect, rect);
   const masks = maskSensitiveAreas(document.body);
 
   try {
-    const canvas = await html2canvas(document.body, {
+    let html2canvas: typeof import("html2canvas-pro").default;
+    try {
+      html2canvas = (await import("html2canvas-pro")).default;
+    } catch (importError) {
+      console.warn("[Feedback] html2canvas-pro unavailable:", importError);
+      return createFallbackScreenshot(rect, feedbackId);
+    }
+
+    const canvas = await html2canvas(target, {
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
       logging: false,
       scale: 1,
-      windowWidth: document.documentElement.clientWidth,
-      windowHeight: document.documentElement.clientHeight,
-      width: document.documentElement.clientWidth,
-      height: document.documentElement.clientHeight,
       scrollX: -window.scrollX,
       scrollY: -window.scrollY,
+      onclone: (clonedDoc) => {
+        sanitizeCloneStyles(clonedDoc);
+      },
       ignoreElements: (element) =>
         element instanceof Element &&
         (element.hasAttribute("data-feedback-ui") ||
           element.hasAttribute("data-feedback-mask-overlay")),
     });
 
-    drawAnnotation(canvas, rect, feedbackId);
-    return canvas.toDataURL("image/png");
+    drawAnnotation(canvas, relativeRect, feedbackId);
+    return compressCanvas(canvas);
   } catch (error) {
     console.warn("[Feedback] screenshot capture failed, using fallback:", error);
     return createFallbackScreenshot(rect, feedbackId);

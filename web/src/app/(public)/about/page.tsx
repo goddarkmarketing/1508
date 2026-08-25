@@ -61,7 +61,11 @@ const whyUs = [
 export default function AboutPage() {
   return (
     <>
-      <section className="relative isolate min-h-[min(72vh,640px)] overflow-hidden">
+      <section
+        className="relative isolate min-h-[min(72vh,640px)] overflow-hidden"
+        data-feedback-id="about-hero"
+        data-feedback-label="About hero"
+      >
         <Image
           src="/brand/expertise-bg.png"
           alt="GGM Thai Travel destination management across Thailand"
