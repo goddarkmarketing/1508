@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
+import { FeedbackDeleteButton } from "@/components/admin/feedback-delete-button";
 import { FeedbackExportButtons } from "@/components/admin/feedback-export-buttons";
 import { FeedbackStatusSelect } from "@/components/admin/feedback-status-select";
 import { Badge } from "@/components/ui/badge";
@@ -164,6 +165,7 @@ export default function AdminFeedbackPage() {
                   <TableHead>ความสำคัญ</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>วันที่</TableHead>
+                  <TableHead className="text-right">จัดการ</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -212,6 +214,9 @@ export default function AdminFeedbackPage() {
                     <TableCell className="text-xs text-muted-foreground">
                       {formatDate(item.createdAt)}
                     </TableCell>
+                    <TableCell className="text-right">
+                      <FeedbackDeleteButton id={item.id} onDeleted={refresh} />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -252,6 +257,7 @@ export default function AdminFeedbackPage() {
                     status={item.status}
                     onUpdated={refresh}
                   />
+                  <FeedbackDeleteButton id={item.id} onDeleted={refresh} />
                 </div>
               </article>
             ))}
