@@ -23,12 +23,17 @@ import { company } from "@/data/company";
 import { destinations } from "@/data/destinations";
 import { homeFaqs } from "@/data/faqs";
 import { getFleetByCategory } from "@/data/fleet";
-import { getFeaturedTours } from "@/data/tours";
+import { ThailandTravelMap } from "@/components/home/thailand-travel-map";
+import { getFeaturedTours, getToursByDestination } from "@/data/tours";
 import { servicePillars } from "@/data/services";
 
 export default function HomePage() {
   const featured = getFeaturedTours();
   const featuredDestinations = destinations.slice(0, 6);
+  const mapDestinations = destinations.map((destination) => ({
+    ...destination,
+    tourCount: getToursByDestination(destination.slug).length,
+  }));
   const destinationOptions = destinations.map((d) => ({
     slug: d.slug,
     name: d.name,
@@ -187,17 +192,18 @@ export default function HomePage() {
       </section>
 
       <section className="section-space" data-feedback-id="home-destinations" data-feedback-label="Destinations">
-        <div className="container-page">
+        <div className="container-page space-y-10">
           <SectionHeader
             eyebrow="Destinations"
             title="Explore Thailand with local expertise"
-            description="From Bangkok riverside culture to Andaman islands and southern highlands."
+            description="Pin it. Plan it. Explore Thailand — click any destination on the map to see our programs."
             action={
               <Button asChild variant="outline">
                 <Link href="/destinations">All destinations</Link>
               </Button>
             }
           />
+          <ThailandTravelMap destinations={mapDestinations} />
           <div className="grid grid-cols-2 gap-0 lg:grid-cols-3">
             {featuredDestinations.map((destination) => (
               <DestinationCard key={destination.slug} destination={destination} />
