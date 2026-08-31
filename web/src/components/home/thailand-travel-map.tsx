@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { SiteImage as Image } from "@/components/shared/site-image";
 import { Button } from "@/components/ui/button";
-import { thailandMapPins, THAILAND_MAP_MOBILE_FRAME, THAILAND_MAP_VIEWBOX, toMapFrameViewBox, toMapPercent, type MapFrame } from "@/data/thailand-map-pins";
+import { computeMapFrame, thailandMapPins, THAILAND_MAP_VIEWBOX, toMapFrameViewBox, toMapPercent, type MapFrame } from "@/data/thailand-map-pins";
 import type { Destination } from "@/types";
 import { withBasePath } from "@/lib/base-path";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ const AUTOPLAY_MS = 4500;
 
 /** Shared map pin label card — fixed size, slight corner radius. */
 const PIN_CARD_SIZE =
-  "h-9 w-[7.5rem] overflow-hidden rounded-md border bg-white p-1 shadow-md max-sm:h-6 max-sm:w-[4.75rem] max-sm:gap-0.5 max-sm:p-0.5 max-sm:shadow-sm";
+  "h-9 w-[7.5rem] overflow-hidden rounded-md border bg-white p-1 shadow-md max-sm:h-7 max-sm:w-[5.25rem] max-sm:gap-1 max-sm:p-0.5 max-sm:shadow-sm";
 const PIN_IMAGE_SIZE =
   "size-7 shrink-0 rounded-sm object-cover max-sm:size-4";
 const PIN_LABEL_SIZE =
@@ -56,12 +56,14 @@ function MapPinMarker({
   onSelect,
   frame,
   compact,
+  showCard = true,
 }: {
   pin: MapPin;
   isActive: boolean;
   onSelect: (slug: string) => void;
   frame: MapFrame;
   compact?: boolean;
+  showCard?: boolean;
 }) {
   const pinPos = toMapPercent(pin.x, pin.y, frame);
   const cardPos = toMapPercent(
@@ -72,26 +74,28 @@ function MapPinMarker({
 
   return (
     <>
-      <div
-        className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
-        style={{ left: pinPos.left, top: pinPos.top, zIndex: isActive ? 40 : 25 }}
-        aria-hidden
-      >
-        {isActive ? (
+      {showCard ? (
+        <div
+          className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
+          style={{ left: pinPos.left, top: pinPos.top, zIndex: isActive ? 40 : 25 }}
+          aria-hidden
+        >
+          {isActive ? (
+            <span
+              className={cn(
+                "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-brand/30",
+                compact ? "size-3" : "size-4",
+              )}
+            />
+          ) : null}
           <span
             className={cn(
-              "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-brand/30",
-              compact ? "size-3" : "size-4",
+              "relative block rounded-full border-2 border-white bg-brand shadow-[0_2px_6px_rgba(193,39,45,0.5)]",
+              compact ? "size-1.5" : "size-2.5",
             )}
           />
-        ) : null}
-        <span
-          className={cn(
-            "relative block rounded-full border-2 border-white bg-brand shadow-[0_2px_6px_rgba(193,39,45,0.5)]",
-            compact ? "size-1.5" : "size-2.5",
-          )}
-        />
-      </div>
+        </div>
+      ) : null}
 
       <button
         type="button"
@@ -100,30 +104,38 @@ function MapPinMarker({
           "absolute -translate-x-1/2 -translate-y-1/2 transition-[z-index,opacity] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           isActive ? "z-[35] opacity-100" : "z-10 opacity-95 hover:z-30 hover:opacity-100",
         )}
-        style={{ left: cardPos.left, top: cardPos.top }}
+        style={{ left: showCard ? cardPos.left : pinPos.left, top: showCard ? cardPos.top : pinPos.top }}
         aria-label={`${pin.destination.name}, ${pin.destination.tourCount} tours`}
         aria-pressed={isActive}
       >
-        <span
-          className={cn(
-            "flex items-center gap-1.5 backdrop-blur transition",
-            PIN_CARD_SIZE,
-            isActive
-              ? "border-primary/40 ring-2 ring-brand/25 max-sm:ring-1"
-              : "border-white/90",
-            !isActive && compact && "max-sm:opacity-80",
-          )}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={withBasePath(pin.destination.image)}
-            alt=""
-            className={PIN_IMAGE_SIZE}
-          />
-          <span className={cn(PIN_LABEL_SIZE, "min-w-0 flex-1 pr-1")}>
-            {pin.destination.name}
+        {showCard ? (
+          <span
+            className={cn(
+              "flex items-center gap-1.5 backdrop-blur transition",
+              PIN_CARD_SIZE,
+              isActive
+                ? "border-primary/40 ring-2 ring-brand/25 max-sm:ring-1"
+                : "border-white/90",
+            )}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={withBasePath(pin.destination.image)}
+              alt=""
+              className={PIN_IMAGE_SIZE}
+            />
+            <span className={cn(PIN_LABEL_SIZE, "min-w-0 flex-1 pr-1")}>
+              {pin.destination.name}
+            </span>
           </span>
-        </span>
+        ) : (
+          <span
+            className={cn(
+              "relative block rounded-full border-2 border-white bg-brand shadow-[0_2px_6px_rgba(193,39,45,0.5)]",
+              isActive ? "size-2.5" : "size-2",
+            )}
+          />
+        )}
       </button>
     </>
   );
@@ -151,10 +163,20 @@ export function ThailandTravelMap({
 
   const [activeSlug, setActiveSlug] = useState<string>(pins[0]?.slug ?? "");
   const [autoplay, setAutoplay] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 639px)").matches,
+  );
+  const [containerWidth, setContainerWidth] = useState(360);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const pauseUntilRef = useRef(0);
 
-  const mapFrame = isMobile ? THAILAND_MAP_MOBILE_FRAME : DESKTOP_FRAME;
+  const mapFrame = useMemo(() => {
+    if (!isMobile) return DESKTOP_FRAME;
+    return computeMapFrame(pins, containerWidth, true);
+  }, [isMobile, pins, containerWidth]);
+
   const mapViewBox = toMapFrameViewBox(mapFrame);
 
   useEffect(() => {
@@ -163,6 +185,20 @@ export function ThailandTravelMap({
     sync();
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const node = mapContainerRef.current;
+    if (!node) return;
+
+    const updateWidth = () => {
+      setContainerWidth(node.getBoundingClientRect().width || 360);
+    };
+
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
   const activePin = pins.find((pin) => pin.slug === activeSlug) ?? pins[0];
@@ -197,10 +233,13 @@ export function ThailandTravelMap({
       data-feedback-label="Thailand travel map"
     >
       <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-8">
-        <div className="relative max-sm:-mx-4 max-sm:w-[calc(100%+2rem)] sm:max-w-none">
-          <div className="w-full overflow-visible sm:flex sm:justify-center sm:px-6">
+        <div className="relative w-full min-w-0 overflow-visible">
           <div
-            className="relative w-full overflow-visible sm:max-w-xl"
+            ref={mapContainerRef}
+            className="relative mx-auto w-full max-w-full overflow-visible sm:max-w-xl sm:px-6"
+          >
+          <div
+            className="relative w-full overflow-visible"
             style={{ aspectRatio: `${mapFrame.width} / ${mapFrame.height}` }}
           >
             <svg
@@ -283,7 +322,7 @@ export function ThailandTravelMap({
           </div>
           </div>
 
-          <p className="mt-3 px-4 text-center text-[10px] text-muted-foreground sm:px-0 sm:text-left">
+          <p className="mt-3 text-center text-[10px] text-muted-foreground sm:text-left">
             Map data via{" "}
             <a
               href="https://github.com/VictorCazanave/svg-maps/tree/master/packages/thailand"

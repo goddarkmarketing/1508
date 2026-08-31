@@ -32,6 +32,36 @@ export const destinations: Destination[] = [
     ],
   },
   {
+    slug: "rayong",
+    name: "Rayong",
+    region: "East",
+    tagline: "Quiet beaches & seafood coast",
+    description:
+      "Mae Ramphueng Beach, Koh Samet gateway, fruit orchards, and relaxed eastern seaboard escapes.",
+    image: "/destinations/pattaya.png",
+    highlights: [
+      "Mae Ramphueng Beach",
+      "Koh Samet ferries",
+      "Rayong fruit orchards",
+      "Seafood dining",
+    ],
+  },
+  {
+    slug: "koh-chang",
+    name: "Koh Chang",
+    region: "East",
+    tagline: "Island jungle, waterfalls & white sand",
+    description:
+      "Thailand’s second-largest island — rainforest treks, Khlong Plu waterfall, and beach resorts in Trat province.",
+    image: "/destinations/pattaya.png",
+    highlights: [
+      "White Sand Beach",
+      "Khlong Plu Waterfall",
+      "Snorkelling & island hopping",
+      "Mangrove kayaking",
+    ],
+  },
+  {
     slug: "hua-hin",
     name: "Hua Hin",
     region: "Central",
@@ -59,6 +89,21 @@ export const destinations: Destination[] = [
       "River Kwai Skywalk",
       "Safari Park",
       "Floating house dinner",
+    ],
+  },
+  {
+    slug: "ayutthaya",
+    name: "Ayutthaya",
+    region: "Central",
+    tagline: "UNESCO ruins & riverside heritage",
+    description:
+      "Ancient temple complexes, Bang Pa-In Summer Palace, and easy day-trip circuits from Bangkok.",
+    image: "/destinations/bangkok-hero.jpg",
+    highlights: [
+      "Ayutthaya Historical Park",
+      "Wat Mahathat",
+      "Bang Pa-In Palace",
+      "Chao Phraya river cruise",
     ],
   },
   {
@@ -119,6 +164,36 @@ export const destinations: Destination[] = [
       "Blue Temple",
       "Black House Museum",
       "Golden Triangle",
+    ],
+  },
+  {
+    slug: "phrae",
+    name: "Phrae",
+    region: "North",
+    tagline: "Teak towns, temples & Lanna heritage",
+    description:
+      "Historic teak mansions, Wat Phra That Cho Hae, and quiet northern streets ideal for culture-focused FIT programs.",
+    image: "/destinations/khaokho-cover.png",
+    highlights: [
+      "Khum Chao Luang",
+      "Wat Phra That Cho Hae",
+      "Vongburi House",
+      "Wat Phra Non",
+    ],
+  },
+  {
+    slug: "mae-hong-son",
+    name: "Mae Hong Son",
+    region: "North",
+    tagline: "Misty valleys, hill tribes & border charm",
+    description:
+      "Jong Kham Lake, Wat Phra That Doi Kong Mu, Pai loops, and Shan-Burmese culture in Thailand’s northwest.",
+    image: "/destinations/chiangmai-square.png",
+    highlights: [
+      "Jong Kham Lake",
+      "Wat Phra That Doi Kong Mu",
+      "Pai & Soppong loops",
+      "Hill tribe villages",
     ],
   },
   {
