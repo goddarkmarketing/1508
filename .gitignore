@@ -28,3 +28,5 @@ Thumbs.db
 web/scripts/toyota-images.json
 web/public/fleet/*-raw.webp
 web/public/fleet/_preview-*
+scripts/face-anonymizer/backup/
+web/_prev_blur/

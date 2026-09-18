@@ -67,13 +67,11 @@ export default function AboutPage() {
         data-feedback-label="About hero"
       >
         <Image
-          src="/brand/expertise-bg.png"
-          alt="GGM Thai Travel destination management across Thailand"
+          src="/brand/expertise-bg.webp"
+          alt="Long-tail boats and limestone cliffs in southern Thailand"
           fill
           priority
-          quality={100}
-          unoptimized
-          className="object-cover object-right"
+          className="object-cover object-[78%_center]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/88 to-navy/35" />
@@ -179,15 +177,15 @@ export default function AboutPage() {
 
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl sm:aspect-[5/4] lg:aspect-[4/5]">
             <Image
-              src="/brand/about-story.png"
-              alt="Travel partners meeting in Bangkok with Wat Arun view"
+              src="/brand/about-story.webp"
+              alt="GGM travelers enjoying a seaside group dinner in Thailand"
               fill
               className="object-cover object-center"
               sizes="(max-width: 1024px) 100vw, 45vw"
             />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy/80 via-navy/35 to-transparent p-6 text-white">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
-                Built for travel partners
+                Real group programs
               </p>
               <p className="mt-1 text-lg font-semibold">
                 Bangkok-based · Nationwide delivery
@@ -315,6 +313,29 @@ export default function AboutPage() {
                 </li>
               ))}
             </ul>
+            <div className="mt-8 grid grid-cols-2 gap-3">
+              <div className="relative aspect-[3/4] overflow-hidden">
+                <Image
+                  src="/brand/mice-welcome.webp"
+                  alt="Incentive trip welcome desk in Phuket"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 45vw, 22vw"
+                />
+              </div>
+              <div className="relative aspect-[3/4] overflow-hidden">
+                <Image
+                  src="/brand/mice-banner.webp"
+                  alt="Phuket incentive welcome banner with GGM branding"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 45vw, 22vw"
+                />
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Sample incentive welcome setup — Phuket corporate program
+            </p>
           </div>
         </div>
       </section>
@@ -418,10 +439,10 @@ export default function AboutPage() {
 
       <section className="relative isolate overflow-hidden">
         <Image
-          src="/brand/about-story.png"
+          src="/brand/about-story.webp"
           alt="Plan your next Thailand program with GGM"
           fill
-          className="object-cover object-[center_30%]"
+          className="object-cover object-[center_35%]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/75 via-navy/55 to-navy/35" />

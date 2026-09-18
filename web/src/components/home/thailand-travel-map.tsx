@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { SiteImage as Image } from "@/components/shared/site-image";
 import { Button } from "@/components/ui/button";
-import { computeMapFrame, thailandMapPins, THAILAND_MAP_VIEWBOX, toMapFrameViewBox, toMapPercent, type MapFrame } from "@/data/thailand-map-pins";
+import { computeMapFrame, getProvinceZone, mapZoneMeta, thailandMapPins, THAILAND_MAP_VIEWBOX, toMapFrameViewBox, toMapPercent, type MapFrame, type MapZone } from "@/data/thailand-map-pins";
 import type { Destination } from "@/types";
 import { withBasePath } from "@/lib/base-path";
 import { cn } from "@/lib/utils";
@@ -163,11 +163,8 @@ export function ThailandTravelMap({
 
   const [activeSlug, setActiveSlug] = useState<string>(pins[0]?.slug ?? "");
   const [autoplay, setAutoplay] = useState(true);
-  const [isMobile, setIsMobile] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 639px)").matches,
-  );
+  // Always start false so SSR and first client render match; sync in useEffect.
+  const [isMobile, setIsMobile] = useState(false);
   const [containerWidth, setContainerWidth] = useState(360);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const pauseUntilRef = useRef(0);
@@ -249,32 +246,44 @@ export function ThailandTravelMap({
               aria-label="Interactive map of Thailand with destination pins"
             >
               <defs>
-                <linearGradient id="land-fill" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#86efac" />
-                  <stop offset="100%" stopColor="#4ade80" />
-                </linearGradient>
                 <linearGradient id="land-active" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#38bdf8" />
+                  <stop offset="0%" stopColor="#7dd3fc" />
                   <stop offset="100%" stopColor="#0284c7" />
                 </linearGradient>
+                {(Object.keys(mapZoneMeta) as MapZone[]).map((zone) => (
+                  <linearGradient
+                    key={zone}
+                    id={`land-${zone}`}
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor={mapZoneMeta[zone].fill} />
+                    <stop offset="100%" stopColor={mapZoneMeta[zone].hover} />
+                  </linearGradient>
+                ))}
               </defs>
 
               {thailandMap.locations.map((location) => {
                 const isActiveProvince =
                   location.id === activePin?.provinceId;
+                const zone = getProvinceZone(location.id);
+                const zoneStyle = mapZoneMeta[zone];
                 return (
                   <path
                     key={location.id}
                     id={location.id}
                     d={location.path}
-                    className={cn(
-                      "transition-[fill,stroke,opacity] duration-500",
+                    className="transition-[fill,stroke,opacity] duration-500"
+                    fill={
                       isActiveProvince
-                        ? "fill-[url(#land-active)] stroke-sky-700"
-                        : "fill-[url(#land-fill)] stroke-emerald-700/50 hover:fill-emerald-300",
-                    )}
-                    strokeWidth={isActiveProvince ? 1.6 : 0.8}
-                    opacity={isActiveProvince ? 1 : 0.92}
+                        ? "url(#land-active)"
+                        : `url(#land-${zone})`
+                    }
+                    stroke={isActiveProvince ? "#0369a1" : zoneStyle.stroke}
+                    strokeWidth={isActiveProvince ? 1.6 : 0.75}
+                    opacity={isActiveProvince ? 1 : 0.96}
                   />
                 );
               })}
@@ -317,7 +326,7 @@ export function ThailandTravelMap({
               aria-hidden
               className="pointer-events-none absolute bottom-3 right-3 hidden rounded-full border border-white/70 bg-white/80 p-2 shadow-sm sm:flex"
             >
-              <Compass className="size-5 text-amber-700" />
+              <Compass className="size-5 text-sky-700" />
             </div>
           </div>
           </div>

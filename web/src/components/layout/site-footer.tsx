@@ -6,6 +6,7 @@ import { company, navigation } from "@/data/company";
 const serviceLinks = [
   { label: "Tours", href: "/tours" },
   { label: "Destinations", href: "/destinations" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Fleet", href: "/fleet" },
   { label: "Services", href: "/services" },
   { label: "Request quote", href: "/inquire" },

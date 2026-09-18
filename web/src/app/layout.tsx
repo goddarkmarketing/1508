@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Sora } from "next/font/google";
+import { Caveat, Manrope, Sora } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { company } from "@/data/company";
@@ -16,6 +16,12 @@ const heading = Sora({
   variable: "--font-heading",
 });
 
+const script = Caveat({
+  subsets: ["latin"],
+  weight: ["600"],
+  variable: "--font-script",
+});
+
 export const metadata: Metadata = {
   title: {
     default: `${company.shortName} | Destination Management Thailand`,
@@ -30,7 +36,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${sans.variable} ${heading.variable} h-full`}>
+    <html
+      lang="en"
+      className={`${sans.variable} ${heading.variable} ${script.variable} h-full`}
+    >
       <body className="min-h-full flex flex-col font-sans">
         <TooltipProvider>
           {children}

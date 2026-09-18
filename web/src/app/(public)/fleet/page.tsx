@@ -156,8 +156,38 @@ export default function FleetPage() {
           <SectionHeader
             eyebrow="Coaches"
             title="Deluxe & VIP coaches"
-            description="Seat-class options for series groups, incentive, and MICE. Coach photos can be replaced with your own fleet shots when available."
+            description="Seat-class options for series groups, incentive, and MICE — photos from recent coach operations."
           />
+
+          <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {[
+              {
+                src: "/fleet/coach-lineup.webp",
+                alt: "White tour coaches lined up for group departure",
+              },
+              {
+                src: "/fleet/coach-welcome.webp",
+                alt: "Coach driver welcoming passengers",
+              },
+              {
+                src: "/fleet/coach-mercedes.webp",
+                alt: "Mercedes tour coach ready for charter",
+              },
+            ].map((photo) => (
+              <div
+                key={photo.src}
+                className="relative aspect-[4/5] overflow-hidden sm:aspect-[4/3]"
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 50vw, 33vw"
+                />
+              </div>
+            ))}
+          </div>
 
           <div className="overflow-hidden rounded-2xl border border-border/80 bg-white">
             <table className="w-full text-sm">

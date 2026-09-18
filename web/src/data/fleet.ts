@@ -27,6 +27,7 @@ export const fleetVehicles: FleetVehicle[] = [
     gallery: [
       "/fleet/commuter-white.webp",
       "/fleet/commuter-alt-white.webp",
+      "/fleet/van-ops.webp",
       "/fleet/hiace-3-white.webp",
     ],
     sourceUrl: "https://www.toyota.co.th/en/model/commuter",
@@ -94,6 +95,8 @@ export const fleetVehicles: FleetVehicle[] = [
     category: "coach",
     seats: "30 seats",
     bestFor: "Series groups, school groups, mid-size incentive",
+    image: "/fleet/coach-lineup.webp",
+    gallery: ["/fleet/coach-lineup.webp", "/fleet/coach-welcome.webp"],
     highlights: [
       "Coach seating for organized group movement",
       "Suitable for Bangkok and upcountry programs",
@@ -106,6 +109,8 @@ export const fleetVehicles: FleetVehicle[] = [
     category: "coach",
     seats: "37 seats",
     bestFor: "Incentive groups and company trips",
+    image: "/fleet/coach-welcome.webp",
+    gallery: ["/fleet/coach-welcome.webp", "/fleet/coach-mercedes.webp"],
     highlights: [
       "Balanced capacity for mid-to-large groups",
       "Full-day charter ready",
@@ -118,6 +123,8 @@ export const fleetVehicles: FleetVehicle[] = [
     category: "coach",
     seats: "44 seats",
     bestFor: "Large series groups and MICE movements",
+    image: "/fleet/coach-mercedes.webp",
+    gallery: ["/fleet/coach-mercedes.webp", "/fleet/coach-lineup.webp"],
     highlights: [
       "High passenger capacity",
       "Efficient for hotel–attraction transfers",
@@ -130,6 +137,8 @@ export const fleetVehicles: FleetVehicle[] = [
     category: "coach",
     seats: "31 seats",
     bestFor: "Premium group travel with higher comfort",
+    image: "/fleet/coach-welcome.webp",
+    gallery: ["/fleet/coach-welcome.webp", "/fleet/van-ops.webp"],
     highlights: [
       "VIP coach class for special groups",
       "Better comfort for long-distance routes",
@@ -142,6 +151,8 @@ export const fleetVehicles: FleetVehicle[] = [
     category: "coach",
     seats: "45 seats",
     bestFor: "Large VIP / incentive movements",
+    image: "/fleet/coach-lineup.webp",
+    gallery: ["/fleet/coach-lineup.webp", "/fleet/coach-mercedes.webp"],
     highlights: [
       "Maximum VIP coach capacity in fleet list",
       "Supports large arrival groups",

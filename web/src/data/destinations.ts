@@ -8,7 +8,7 @@ export const destinations: Destination[] = [
     tagline: "The City of Culture, Heritage & Riverside Charm",
     description:
       "Thailand’s vibrant capital — temples, riverside cruises, night markets, and shopping hubs in one seamless city experience.",
-    image: "/destinations/bangkok-hero.jpg",
+    image: "/destinations/bangkok-card.webp",
     highlights: [
       "Wat Arun & Chao Phraya",
       "Damnoen Saduak Floating Market",
@@ -23,7 +23,7 @@ export const destinations: Destination[] = [
     tagline: "Beaches, shows, and Coral Island escapes",
     description:
       "Coastal energy with floating markets, tropical gardens, and optional Coral Island speed-boat day trips.",
-    image: "/destinations/pattaya.png",
+    image: "/destinations/pattaya-card.webp",
     highlights: [
       "Pattaya Floating Market",
       "Nong Nooch Tropical Garden",
@@ -38,7 +38,7 @@ export const destinations: Destination[] = [
     tagline: "Quiet beaches & seafood coast",
     description:
       "Mae Ramphueng Beach, Koh Samet gateway, fruit orchards, and relaxed eastern seaboard escapes.",
-    image: "/destinations/pattaya.png",
+    image: "/destinations/rayong-card.webp",
     highlights: [
       "Mae Ramphueng Beach",
       "Koh Samet ferries",
@@ -53,7 +53,7 @@ export const destinations: Destination[] = [
     tagline: "Island jungle, waterfalls & white sand",
     description:
       "Thailand’s second-largest island — rainforest treks, Khlong Plu waterfall, and beach resorts in Trat province.",
-    image: "/destinations/pattaya.png",
+    image: "/destinations/koh-chang-card.webp",
     highlights: [
       "White Sand Beach",
       "Khlong Plu Waterfall",
@@ -68,7 +68,7 @@ export const destinations: Destination[] = [
     tagline: "Royal beach town with farms and vineyards",
     description:
       "A relaxed seaside escape combining floating markets, sheep farms, vineyards, and Hua Hin’s classic beachfront.",
-    image: "/destinations/huahin-cover.png",
+    image: "/destinations/huahin-card.webp",
     highlights: [
       "Zucata Sheep Farm",
       "Monsoon Valley Vineyard",
@@ -83,7 +83,7 @@ export const destinations: Destination[] = [
     tagline: "River Kwai history and nature escapes",
     description:
       "Bridge over the River Kwai, skywalks, safari experiences, and floating-house evenings outside Bangkok.",
-    image: "/destinations/kanchanaburi-cover.png",
+    image: "/destinations/kanchanaburi-cover.webp",
     highlights: [
       "River Kwai Bridge",
       "River Kwai Skywalk",
@@ -203,7 +203,7 @@ export const destinations: Destination[] = [
     tagline: "Andaman beaches, Phi Phi & James Bond Island",
     description:
       "Thailand’s largest island — Old Town heritage, island-hopping by speed boat, and Phang Nga Bay canoeing.",
-    image: "/destinations/phuket-square.png",
+    image: "/destinations/phuket-square.webp",
     highlights: [
       "Phuket Old Town",
       "Phi Phi & Maya Bay",

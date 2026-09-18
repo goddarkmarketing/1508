@@ -129,6 +129,7 @@ export const navigation = [
   { label: "About", href: "/about" },
   { label: "Destinations", href: "/destinations" },
   { label: "Tours", href: "/tours" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Services", href: "/services" },
   { label: "Fleet", href: "/fleet" },
   { label: "Contact", href: "/contact" },

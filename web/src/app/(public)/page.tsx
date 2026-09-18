@@ -24,8 +24,10 @@ import { destinations } from "@/data/destinations";
 import { homeFaqs } from "@/data/faqs";
 import { getFleetByCategory } from "@/data/fleet";
 import { ThailandTravelMap } from "@/components/home/thailand-travel-map";
+import { HomeHeroSlider } from "@/components/home/home-hero-slider";
 import { getFeaturedTours, getToursByDestination } from "@/data/tours";
 import { servicePillars } from "@/data/services";
+import { GalleryExplorer } from "@/components/gallery/gallery-explorer";
 
 export default function HomePage() {
   const featured = getFeaturedTours();
@@ -44,33 +46,20 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative isolate w-full overflow-hidden bg-white" data-feedback-id="home-hero" data-feedback-label="Hero banner">
-        <Image
-          src="/brand/hero-cover.png"
-          alt="GGM Thai Travel — Beautiful destinations and professional travel services"
-          width={1024}
-          height={450}
-          priority
-          quality={100}
-          unoptimized
-          className="h-auto w-full"
-          sizes="100vw"
-        />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white via-white/70 to-transparent sm:h-32" />
-      </section>
+      <HomeHeroSlider />
 
       <section id="hero-quote" className="border-b bg-white" data-feedback-id="home-quick-quote" data-feedback-label="Quick quote">
         <div className="container-page grid items-center gap-10 py-14 lg:grid-cols-2 lg:gap-14 lg:py-20">
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-700">
+          <div className="space-y-5">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">
-              Destination Management · Thailand
+              Partner with GGM
             </p>
-            <h1 className="text-4xl font-semibold leading-[1.08] text-navy sm:text-5xl lg:text-6xl">
-              <span className="text-brand">GGM</span> Thai Travel
-            </h1>
+            <h2 className="text-3xl font-semibold leading-tight text-navy sm:text-4xl">
+              Get a quotation for your next Thailand program
+            </h2>
             <p className="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Flexible private & SIC programs, transfers, and ground services for
-              agents across ASEAN, Europe, and China.
+              Share destination and passenger count — our Bangkok operations team
+              will follow up with nett options for agents.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" variant="outline">
@@ -83,9 +72,6 @@ export default function HomePage() {
                 <Link href="/contact">Contact sales</Link>
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              TAT License {company.tatLicense} · Founded {company.founded}
-            </p>
           </div>
 
           <div className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
@@ -113,15 +99,14 @@ export default function HomePage() {
 
       <section className="relative isolate overflow-hidden border-b" data-feedback-id="home-expertise" data-feedback-label="Expertise">
         <Image
-          src="/brand/expertise-bg.png"
-          alt="GGM Thai Travel expertise across Thailand"
+          src="/brand/expertise-bg.webp"
+          alt="Long-tail boats and limestone cliffs in southern Thailand"
           fill
-          quality={100}
-          unoptimized
-          className="object-cover object-right"
+          className="object-cover object-[78%_center]"
           sizes="100vw"
+          priority={false}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/92 to-white/20 sm:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/25 sm:via-white/85 sm:to-transparent" />
         <div className="container-page relative section-space">
           <div className="max-w-xl">
             <h2 className="text-3xl font-semibold tracking-tight text-navy sm:text-4xl">
@@ -269,6 +254,26 @@ export default function HomePage() {
               <Link href="/services">See transfer rates</Link>
             </Button>
           </div>
+        </div>
+      </section>
+
+      <section
+        className="section-space border-b bg-[#f7f9fc]"
+        data-feedback-id="home-moments"
+        data-feedback-label="On the ground moments"
+      >
+        <div className="container-page">
+          <SectionHeader
+            eyebrow="On the ground"
+            title="Real moments from our programs"
+            description="Filter by market or album — photos from GGM group programs across Thailand and partner markets."
+            action={
+              <Button asChild variant="outline">
+                <Link href="/gallery">Open gallery page</Link>
+              </Button>
+            }
+          />
+          <GalleryExplorer />
         </div>
       </section>
 

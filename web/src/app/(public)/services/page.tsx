@@ -321,7 +321,7 @@ export default function ServicesPage() {
               <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
                 <div className="relative min-h-[260px]">
                   <Image
-                    src="/destinations/pattaya.png"
+                    src="/destinations/pattaya-card.webp"
                     alt={trip.title}
                     fill
                     className="object-cover"

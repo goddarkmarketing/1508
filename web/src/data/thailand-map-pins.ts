@@ -140,6 +140,120 @@ export const thailandMapPins = [
 
 export type ThailandMapPin = (typeof thailandMapPins)[number];
 
+/** Map zones for province fills — North / East / West / South (ฟ้าอ่อนเข้าธีม GGM). */
+export type MapZone = "north" | "east" | "west" | "south";
+
+export const mapZoneMeta: Record<
+  MapZone,
+  { labelTh: string; labelEn: string; fill: string; hover: string; stroke: string }
+> = {
+  north: {
+    labelTh: "เหนือ",
+    labelEn: "North",
+    fill: "#d7ebf8",
+    hover: "#b9daf2",
+    stroke: "#7eb6d9",
+  },
+  east: {
+    labelTh: "ออก",
+    labelEn: "East",
+    fill: "#c4e0f5",
+    hover: "#9ec9ea",
+    stroke: "#6aa3d1",
+  },
+  west: {
+    labelTh: "ตก",
+    labelEn: "West",
+    fill: "#e4f1fa",
+    hover: "#c8dff2",
+    stroke: "#8bb4d6",
+  },
+  south: {
+    labelTh: "ใต้",
+    labelEn: "South",
+    fill: "#b6d6ef",
+    hover: "#8fc0e4",
+    stroke: "#5a98c7",
+  },
+};
+
+/** Province id → zone (Central grouped with West / ตก). */
+const NORTH_IDS = new Set([
+  "cmi",
+  "lpn",
+  "lpg",
+  "utd",
+  "pre",
+  "nan",
+  "pyo",
+  "cri",
+  "msn",
+  "nsn",
+  "uti",
+  "kpt",
+  "tak",
+  "sti",
+  "plk",
+  "pct",
+  "pnb",
+]);
+
+const EAST_IDS = new Set([
+  "cbi",
+  "ryg",
+  "cti",
+  "trt",
+  "cco",
+  "pri",
+  "nyk",
+  "skw",
+  "nma",
+  "brm",
+  "srn",
+  "ssk",
+  "ubn",
+  "yst",
+  "cpm",
+  "acr",
+  "bkn",
+  "nbp",
+  "kkn",
+  "udn",
+  "lei",
+  "nki",
+  "mkm",
+  "ret",
+  "ksn",
+  "snk",
+  "npm",
+  "mdh",
+]);
+
+const SOUTH_IDS = new Set([
+  "nrt",
+  "kbi",
+  "pna",
+  "pkt",
+  "sni",
+  "rng",
+  "cpn",
+  "ska",
+  "stn",
+  "trg",
+  "plg",
+  "ptn",
+  "yla",
+  "nwt",
+  "lksg",
+]);
+
+export function getProvinceZone(provinceId: string): MapZone {
+  if (NORTH_IDS.has(provinceId)) return "north";
+  if (EAST_IDS.has(provinceId)) return "east";
+  if (SOUTH_IDS.has(provinceId)) return "south";
+  return "west";
+}
+
 export const THAILAND_MAP_VIEWBOX = { width: 560, height: 1025 } as const;
 
 export type MapFrame = {
