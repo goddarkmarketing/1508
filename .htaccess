@@ -8,6 +8,7 @@ RewriteRule ^(?:\.git|scripts|web/(?:src|node_modules|\.next|scripts))(?:/|$) - 
 RewriteRule ^web/api/(?:data|config\.local\.php|config\.example\.php)(?:/|$) - [F,L]
 
 RewriteRule ^api/install\.php$ web/api/install.php [L]
+RewriteRule ^api/reset-admin\.php$ web/api/reset-admin.php [L]
 RewriteRule ^api/?$ web/api/index.php [L]
 RewriteRule ^api/.+ web/api/index.php [L]
 
