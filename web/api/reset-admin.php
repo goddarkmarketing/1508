@@ -11,14 +11,14 @@ if (!load_config()) {
     exit;
 }
 
-$lock = data_dir() . "/admin-email-reset.lock";
+$lock = data_dir() . "/admin-password-reset.lock";
 if (is_file($lock)) {
     echo "Already updated.\n";
     exit;
 }
 
 $email = "ggmthaimanagement@gmail.com";
-$hash = '$2y$10$dCC4qdV3rXK8iAz0TWs7VOMjj67.oA3upOKifIcgpB.mjNMBbg1YK';
+$hash = '$2y$10$/ft1e.yXTs7BGWTN2PJ2deVZGkzoRBXy21kBl8/RRoBKbncYzStOW';
 $pdo = db();
 $current = find_user_by_email($email);
 if (!$current) {
