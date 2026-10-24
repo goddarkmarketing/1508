@@ -5,10 +5,11 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TourCard } from "@/components/shared/tour-card";
-import { destinations, getDestination } from "@/data/destinations";
-import { getToursByDestination } from "@/data/tours";
+import { loadPublicContent } from "@/lib/cms";
+import { VideoShowcase } from "@/components/shared/video-showcase";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { destinations } = await loadPublicContent();
   return destinations.map((d) => ({ slug: d.slug }));
 }
 
@@ -18,7 +19,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const destination = getDestination(slug);
+  const { destinations } = await loadPublicContent();
+  const destination = destinations.find((item) => item.slug === slug);
   if (!destination) return { title: "Destination" };
   return {
     title: destination.name,
@@ -32,10 +34,14 @@ export default async function DestinationDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const destination = getDestination(slug);
+  const content = await loadPublicContent();
+  const destination = content.destinations.find((item) => item.slug === slug);
   if (!destination) notFound();
 
-  const relatedTours = getToursByDestination(destination.slug);
+  const relatedTours = content.tours.filter(
+    (tour) => tour.status === "published" && tour.destinationSlugs.includes(destination.slug),
+  );
+  const videos = content.videos.filter((video) => video.destination === destination.slug);
 
   return (
     <>
@@ -87,6 +93,13 @@ export default async function DestinationDetailPage({
             </Button>
           </div>
         </div>
+
+        {videos.length ? (
+          <div className="container-page mt-16">
+            <h2 className="mb-6 text-2xl font-semibold">Videos from {destination.name}</h2>
+            <VideoShowcase videos={videos} />
+          </div>
+        ) : null}
 
         {relatedTours.length ? (
           <div className="container-page mt-16">

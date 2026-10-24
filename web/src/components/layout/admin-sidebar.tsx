@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ClipboardList,
+  Images,
   Inbox,
   LayoutDashboard,
   LogOut,
@@ -11,15 +12,16 @@ import {
   MapPin,
   Settings,
 } from "lucide-react";
-import { clearClientSession } from "@/lib/auth";
+import { adminFetch, clearToken } from "@/lib/admin-api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
 
-const items = [
+export const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/tours", label: "Tours", icon: Map },
   { href: "/admin/destinations", label: "Destinations", icon: MapPin },
+  { href: "/admin/media", label: "Media", icon: Images },
   { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
   { href: "/admin/feedback", label: "Feedback", icon: ClipboardList },
   { href: "/admin/settings", label: "Settings", icon: Settings },
@@ -35,8 +37,13 @@ export function AdminSidebar({
   const pathname = usePathname();
   const router = useRouter();
 
-  function logout() {
-    clearClientSession();
+  async function logout() {
+    try {
+      await adminFetch("/auth/logout", { method: "POST" });
+    } catch {
+      // The local token is cleared either way.
+    }
+    clearToken();
     router.push("/login");
   }
 
@@ -49,7 +56,7 @@ export function AdminSidebar({
         <p className="mt-1 text-xs text-muted-foreground">{company.shortName}</p>
       </div>
       <nav className="flex-1 space-y-1 p-3">
-        {items.map((item) => {
+        {adminNavItems.map((item) => {
           const active =
             item.href === "/admin"
               ? pathname === "/admin"

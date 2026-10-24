@@ -5,11 +5,16 @@ import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { TourCard } from "@/components/shared/tour-card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { destinations } from "@/data/destinations";
 import { getTourMenuByDuration } from "@/data/tour-menu";
-import { getPublishedTours } from "@/data/tours";
+import type { Destination, TourPackage } from "@/types";
 
-export function ToursCatalog() {
+export function ToursCatalog({
+  packages,
+  destinationList,
+}: {
+  packages: TourPackage[];
+  destinationList: Destination[];
+}) {
   const searchParams = useSearchParams();
   const params = useMemo(
     () => ({
@@ -23,7 +28,7 @@ export function ToursCatalog() {
   );
 
   const tours = useMemo(() => {
-    let list = getPublishedTours();
+    let list = packages.filter((tour) => tour.status === "published");
 
     if (params.muslim === "1") {
       list = list.filter((t) => t.muslimFriendly);
@@ -52,12 +57,12 @@ export function ToursCatalog() {
       );
     }
     return list;
-  }, [params]);
+  }, [packages, params]);
 
-  const selectedDestination = destinations.find(
+  const selectedDestination = destinationList.find(
     (d) => d.slug === params.destination,
   );
-  const durationOptions = getTourMenuByDuration();
+  const durationOptions = getTourMenuByDuration(packages);
 
   return (
     <div className="section-space">
@@ -86,7 +91,7 @@ export function ToursCatalog() {
             className="h-10 rounded-lg border bg-background px-3 text-sm"
           >
             <option value="">All destinations</option>
-            {destinations.map((destination) => (
+            {destinationList.map((destination) => (
               <option key={destination.slug} value={destination.slug}>
                 {destination.name}
               </option>

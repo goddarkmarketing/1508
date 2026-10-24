@@ -64,6 +64,7 @@ export interface Inquiry {
   pax?: number;
   message: string;
   status: InquiryStatus;
+  note?: string;
 }
 
 export interface TransferRate {

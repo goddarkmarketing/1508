@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GalleryExplorer } from "@/components/gallery/gallery-explorer";
-import { galleryAlbums, galleryPhotos } from "@/data/gallery";
+import { loadPublicContent } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -11,7 +11,8 @@ export const metadata: Metadata = {
     "Real group program photos from GGM Thai Travel — Thailand, Malaysia, Singapore, and Indonesia incentive & tour groups.",
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const { galleryAlbums, galleryPhotos } = await loadPublicContent();
   return (
     <>
       <section className="border-b bg-white">
@@ -47,7 +48,7 @@ export default function GalleryPage() {
         data-feedback-label="Group photo albums"
       >
         <div className="container-page">
-          <GalleryExplorer />
+          <GalleryExplorer albums={galleryAlbums} photos={galleryPhotos} />
         </div>
       </section>
     </>

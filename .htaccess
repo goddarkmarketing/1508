@@ -1,0 +1,25 @@
+RewriteEngine On
+
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+RewriteRule ^web/(out|public|api)(/|$) - [L]
+RewriteRule ^(?:\.git|scripts|web/(?:src|node_modules|\.next|scripts))(?:/|$) - [F,L]
+RewriteRule ^web/api/(?:data|config\.local\.php|config\.example\.php)(?:/|$) - [F,L]
+
+RewriteRule ^api/install\.php$ web/api/install.php [L]
+RewriteRule ^api/?$ web/api/index.php [L]
+RewriteRule ^api/.+ web/api/index.php [L]
+
+RewriteRule ^uploads/(.*)$ web/public/uploads/$1 [L]
+
+RewriteRule ^$ web/out/index.html [L]
+
+RewriteCond %{DOCUMENT_ROOT}/web/out/$1 -f
+RewriteRule ^(.+)$ web/out/$1 [L]
+
+RewriteCond %{DOCUMENT_ROOT}/web/out/$1index.html -f
+RewriteRule ^(.+)$ web/out/$1index.html [L]
+
+RewriteCond %{DOCUMENT_ROOT}/web/out/$1/index.html -f
+RewriteRule ^(.+)$ web/out/$1/index.html [L]

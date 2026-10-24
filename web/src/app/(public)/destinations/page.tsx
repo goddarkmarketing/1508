@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { DestinationCard } from "@/components/shared/destination-card";
-import { destinations } from "@/data/destinations";
+import { loadPublicContent } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "Destinations",
   description: "Explore Thailand destinations operated by GGM Thai Travel.",
 };
 
-export default function DestinationsPage() {
+export default async function DestinationsPage() {
+  const { destinations } = await loadPublicContent();
   const regions = ["Central", "North", "South", "East"] as const;
 
   return (

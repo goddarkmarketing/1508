@@ -1,23 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
+import { BackupManager } from "@/components/admin/backup-manager";
+import { UserManager } from "@/components/admin/user-manager";
+import { useAdminSession } from "@/components/admin/session";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { company } from "@/data/company";
-import { getClientSession, type SessionUser } from "@/lib/auth";
+import { adminFetch } from "@/lib/admin-api";
+import { canEditContent } from "@/lib/auth";
 
 export default function AdminSettingsPage() {
-  const [session, setSession] = useState<SessionUser | null>(null);
-
-  useEffect(() => {
-    setSession(getClientSession());
-  }, []);
+  const session = useAdminSession();
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [nextPassword, setNextPassword] = useState("");
 
   return (
-    <div>
-      <PageHeader
-        title="Settings"
-        description="Company profile and role access for the back office."
-      />
+    <div className="space-y-6">
+      <PageHeader title="Settings" description="โปรไฟล์บริษัท และสิทธิ์ของทีมที่เข้าหลังบ้าน" />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border bg-card p-6">
@@ -47,23 +49,62 @@ export default function AdminSettingsPage() {
           <dl className="mt-4 space-y-3 text-sm">
             <div>
               <dt className="text-muted-foreground">Name</dt>
-              <dd className="font-medium">{session?.name}</dd>
+              <dd className="font-medium">{session.name}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Email</dt>
-              <dd className="font-medium">{session?.email}</dd>
+              <dd className="font-medium">{session.email}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Role</dt>
-              <dd className="font-medium capitalize">{session?.role}</dd>
+              <dd className="font-medium capitalize">{session.role}</dd>
             </div>
           </dl>
-          <p className="mt-6 text-xs text-muted-foreground">
-            Roles: admin (full access), sales (inquiries & catalog), viewer (read-only —
-            ready for future permission matrix).
-          </p>
+          <form
+            className="mt-6 grid gap-3"
+            onSubmit={async (event) => {
+              event.preventDefault();
+              try {
+                await adminFetch("/auth/password", {
+                  method: "PATCH",
+                  body: JSON.stringify({ current: currentPassword, next: nextPassword }),
+                });
+                setCurrentPassword("");
+                setNextPassword("");
+                toast.success("Password updated");
+              } catch (error) {
+                toast.error(error instanceof Error ? error.message : "Could not update the password");
+              }
+            }}
+          >
+            <h3 className="font-medium">Change your password</h3>
+            <Input
+              type="password"
+              placeholder="Current password"
+              value={currentPassword}
+              onChange={(event) => setCurrentPassword(event.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="New password (10+ characters)"
+              value={nextPassword}
+              onChange={(event) => setNextPassword(event.target.value)}
+              required
+            />
+            <Button type="submit" className="w-fit">
+              Update password
+            </Button>
+          </form>
         </section>
       </div>
+
+      {canEditContent(session.role) ? (
+        <>
+          <BackupManager />
+          <UserManager currentId={session.id} />
+        </>
+      ) : null}
     </div>
   );
 }

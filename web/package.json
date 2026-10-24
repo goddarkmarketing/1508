@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3010",
-    "build": "next build",
+    "api": "php -S localhost:8088 -t api api/router.php",
+    "build": "next build && node scripts/prepare-host.js",
     "start": "next start",
     "lint": "eslint"
   },

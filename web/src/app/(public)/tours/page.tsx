@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ToursCatalog } from "@/components/tours/tours-catalog";
+import { loadPublicContent } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "Tours",
   description: "Private and join tour packages by GGM Thai Travel.",
 };
 
-export default function ToursPage() {
+export default async function ToursPage() {
+  const content = await loadPublicContent();
   return (
     <Suspense
       fallback={
@@ -16,7 +18,7 @@ export default function ToursPage() {
         </div>
       }
     >
-      <ToursCatalog />
+      <ToursCatalog packages={content.tours} destinationList={content.destinations} />
     </Suspense>
   );
 }

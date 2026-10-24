@@ -1,10 +1,14 @@
-import { destinations } from "@/data/destinations";
+import { destinations as staticDestinations } from "@/data/destinations";
 import { getPublishedTours } from "@/data/tours";
 import { formatDuration } from "@/lib/format";
+import type { Destination, TourPackage } from "@/types";
 
-export function getTourMenuByDestination() {
-  const tours = getPublishedTours();
-  return destinations
+export function getTourMenuByDestination(
+  destinationList: Destination[] = staticDestinations,
+  tourList: TourPackage[] = getPublishedTours(),
+) {
+  const tours = tourList.filter((tour) => tour.status === "published");
+  return destinationList
     .map((destination) => {
       const count = tours.filter((tour) =>
         tour.destinationSlugs.includes(destination.slug),
@@ -22,8 +26,8 @@ export function getTourMenuByDestination() {
     .filter((item) => item.count > 0);
 }
 
-export function getTourMenuByDuration() {
-  const tours = getPublishedTours();
+export function getTourMenuByDuration(tourList: TourPackage[] = getPublishedTours()) {
+  const tours = tourList.filter((tour) => tour.status === "published");
   const map = new Map<string, { days: number; nights: number; count: number }>();
 
   for (const tour of tours) {

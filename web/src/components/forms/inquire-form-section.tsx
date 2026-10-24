@@ -2,20 +2,17 @@
 
 import { useSearchParams } from "next/navigation";
 import { InquiryForm } from "@/components/forms/inquiry-form";
-import { destinations } from "@/data/destinations";
-import { getPublishedTours } from "@/data/tours";
 import type { InquiryFormValues } from "@/lib/validations";
 
-export function InquireFormSection() {
+export function InquireFormSection({
+  tours,
+  destinations,
+}: {
+  tours: { slug: string; title: string }[];
+  destinations: { slug: string; name: string }[];
+}) {
   const searchParams = useSearchParams();
-  const tours = getPublishedTours().map((t) => ({
-    slug: t.slug,
-    title: t.title,
-  }));
-  const destinationOptions = destinations.map((d) => ({
-    slug: d.slug,
-    name: d.name,
-  }));
+  const destinationOptions = destinations;
 
   const type = searchParams.get("type") as
     | InquiryFormValues["inquiryType"]

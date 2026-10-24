@@ -3,19 +3,21 @@ import { Mail, Phone } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { InquiryForm } from "@/components/forms/inquiry-form";
 import { company } from "@/data/company";
-import { destinations } from "@/data/destinations";
-import { getPublishedTours } from "@/data/tours";
+import { loadPublicContent } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: "Contact GGM Thai Travel sales and operations team.",
 };
 
-export default function ContactPage() {
-  const tours = getPublishedTours().map((t) => ({ slug: t.slug, title: t.title }));
-  const destinationOptions = destinations.map((d) => ({
-    slug: d.slug,
-    name: d.name,
+export default async function ContactPage() {
+  const content = await loadPublicContent();
+  const tours = content.tours
+    .filter((tour) => tour.status === "published")
+    .map((tour) => ({ slug: tour.slug, title: tour.title }));
+  const destinationOptions = content.destinations.map((destination) => ({
+    slug: destination.slug,
+    name: destination.name,
   }));
 
   return (

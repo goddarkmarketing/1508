@@ -60,7 +60,7 @@ export function InquiryForm({
   async function onSubmit(values: InquiryFormValues) {
     setSubmitting(true);
     try {
-      createInquiry({
+      await createInquiry({
         ...values,
         phone: values.phone || undefined,
         company: values.company || undefined,

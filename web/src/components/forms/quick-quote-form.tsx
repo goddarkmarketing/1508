@@ -39,7 +39,7 @@ export function QuickQuoteForm({
 
     setSubmitting(true);
     try {
-      createInquiry({
+      await createInquiry({
         name: name.trim(),
         email: email.trim(),
         inquiryType: "tour",

@@ -1,7 +1,6 @@
 # Dependencies & build
 web/node_modules/
 web/.next/
-web/out/
 web/build/
 web/.vercel/
 web/*.tsbuildinfo
@@ -23,6 +22,15 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# Local admin API
+web/api/config.local.php
+web/api/data/*
+!web/api/data/.gitignore
+!web/api/data/.htaccess
+web/public/uploads/*
+!web/public/uploads/.gitkeep
+!web/public/uploads/.htaccess
 
 # Scripts temp
 web/scripts/toyota-images.json

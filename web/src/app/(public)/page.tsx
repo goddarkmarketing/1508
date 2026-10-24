@@ -20,21 +20,25 @@ import { DestinationCard } from "@/components/shared/destination-card";
 import { TourSlider } from "@/components/shared/tour-slider";
 import { QuickQuoteForm } from "@/components/forms/quick-quote-form";
 import { company } from "@/data/company";
-import { destinations } from "@/data/destinations";
 import { homeFaqs } from "@/data/faqs";
 import { getFleetByCategory } from "@/data/fleet";
 import { ThailandTravelMap } from "@/components/home/thailand-travel-map";
 import { HomeHeroSlider } from "@/components/home/home-hero-slider";
-import { getFeaturedTours, getToursByDestination } from "@/data/tours";
 import { servicePillars } from "@/data/services";
 import { GalleryExplorer } from "@/components/gallery/gallery-explorer";
+import { VideoShowcase } from "@/components/shared/video-showcase";
+import { loadPublicContent } from "@/lib/cms";
 
-export default function HomePage() {
-  const featured = getFeaturedTours();
+export default async function HomePage() {
+  const content = await loadPublicContent();
+  const destinations = content.destinations;
+  const featured = content.tours.filter((tour) => tour.featured && tour.status === "published");
   const featuredDestinations = destinations.slice(0, 6);
   const mapDestinations = destinations.map((destination) => ({
     ...destination,
-    tourCount: getToursByDestination(destination.slug).length,
+    tourCount: content.tours.filter(
+      (tour) => tour.status === "published" && tour.destinationSlugs.includes(destination.slug),
+    ).length,
   }));
   const destinationOptions = destinations.map((d) => ({
     slug: d.slug,
@@ -46,7 +50,11 @@ export default function HomePage() {
 
   return (
     <>
-      <HomeHeroSlider />
+      <HomeHeroSlider
+        shots={content.heroMosaic}
+        avatars={content.heroBadgeAvatars}
+        destinationCount={destinations.length}
+      />
 
       <section id="hero-quote" className="border-b bg-white" data-feedback-id="home-quick-quote" data-feedback-label="Quick quote">
         <div className="container-page grid items-center gap-10 py-14 lg:grid-cols-2 lg:gap-14 lg:py-20">
@@ -197,7 +205,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-space border-b bg-[#f7f9fc]" data-feedback-id="home-fleet" data-feedback-label="Fleet teaser">
+      <section className="section-space border-y bg-[#f7f9fc]" data-feedback-id="home-videos" data-feedback-label="Travel videos">
+        <div className="container-page">
+          <SectionHeader
+            eyebrow="Videos"
+            title="See Northern Thailand in motion"
+            description="Highlights from Chiang Mai and Chiang Rai — temples, elephant care, and Khantoke dinner featured in our programs."
+          />
+          <VideoShowcase videos={content.videos} />
+        </div>
+      </section>
+
+      <section className="section-space border-b bg-white" data-feedback-id="home-fleet" data-feedback-label="Fleet teaser">
         <div className="container-page">
           <SectionHeader
             eyebrow="Fleet"
@@ -273,7 +292,7 @@ export default function HomePage() {
               </Button>
             }
           />
-          <GalleryExplorer />
+          <GalleryExplorer albums={content.galleryAlbums} photos={content.galleryPhotos} />
         </div>
       </section>
 

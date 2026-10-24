@@ -26,11 +26,6 @@ export default function LoginPage() {
           </p>
         </div>
         <LoginForm />
-        <div className="mt-6 rounded-xl bg-muted/60 p-3 text-xs text-muted-foreground">
-          <p className="font-medium text-foreground">Demo accounts</p>
-          <p className="mt-1">Admin: ggmthaimanagement@gmail.com / admin123</p>
-          <p>Sales: ggm.thaitravel@gmail.com / sales123</p>
-        </div>
         <p className="mt-6 text-center text-sm">
           <Link href="/" className="text-primary hover:underline">
             Back to website

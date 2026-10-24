@@ -4,11 +4,9 @@ import { SiteImage as Image } from "@/components/shared/site-image";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
 import { destinations } from "@/data/destinations";
-import { heroBadgeAvatars, heroMosaic } from "@/data/hero-slides";
+import { heroBadgeAvatars, heroMosaic, type HeroMosaicShot } from "@/data/hero-slides";
 import { withBasePath } from "@/lib/base-path";
 import { cn } from "@/lib/utils";
-
-const [shotTopLeft, shotBottomLeft, shotTopRight, shotBottomRight] = heroMosaic;
 
 function MosaicShot({
   shot,
@@ -67,8 +65,18 @@ function MosaicShot({
   );
 }
 
-export function HomeHeroSlider() {
-  const destinationCount = destinations.length;
+export function HomeHeroSlider({
+  shots = heroMosaic,
+  avatars = [...heroBadgeAvatars],
+  destinationCount = destinations.length,
+}: {
+  shots?: HeroMosaicShot[];
+  avatars?: string[];
+  destinationCount?: number;
+}) {
+  const mosaic = shots.length >= 4 ? shots : heroMosaic;
+  const [shotTopLeft, shotBottomLeft, shotTopRight, shotBottomRight] = mosaic;
+  const badgeAvatars = avatars.length ? avatars : [...heroBadgeAvatars];
 
   return (
     <section
@@ -118,7 +126,7 @@ export function HomeHeroSlider() {
                   </span>
                 </p>
                 <div className="hidden items-center lg:flex">
-                  {heroBadgeAvatars.map((src, i) => (
+                  {badgeAvatars.map((src, i) => (
                     <span
                       key={src}
                       className={cn(

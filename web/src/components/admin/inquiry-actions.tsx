@@ -1,37 +1,39 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { InquiryStatus } from "@/types";
-import { updateInquiryStatus } from "@/lib/inquiry-store";
+import { adminFetch } from "@/lib/admin-api";
 
 export function InquiryActions({
   id,
   status,
+  disabled,
   onUpdated,
 }: {
   id: string;
   status: InquiryStatus;
+  disabled?: boolean;
   onUpdated?: () => void;
 }) {
-  const router = useRouter();
-
-  function update(next: InquiryStatus) {
-    const updated = updateInquiryStatus(id, next);
-    if (!updated) {
-      toast.error("Unable to update status");
-      return;
+  async function update(next: InquiryStatus) {
+    try {
+      await adminFetch(`/inquiries/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: next }),
+      });
+      toast.success("Status updated");
+      onUpdated?.();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to update status");
     }
-    toast.success("Status updated");
-    onUpdated?.();
-    router.refresh();
   }
 
   return (
     <select
       className="h-9 rounded-lg border bg-background px-2 text-xs"
       value={status}
-      onChange={(e) => update(e.target.value as InquiryStatus)}
+      disabled={disabled}
+      onChange={(event) => update(event.target.value as InquiryStatus)}
     >
       <option value="new">New</option>
       <option value="in-progress">In progress</option>

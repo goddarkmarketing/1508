@@ -10,12 +10,12 @@ import { TourBookingCard } from "@/components/tours/tour-booking-card";
 import { TourFacts } from "@/components/tours/tour-facts";
 import { TourInclusions } from "@/components/tours/tour-inclusions";
 import { TourItinerary } from "@/components/tours/tour-itinerary";
-import { getDestination } from "@/data/destinations";
-import { getPublishedTours, getTour } from "@/data/tours";
+import { loadPublicContent } from "@/lib/cms";
 import { formatDuration } from "@/lib/format";
 
-export function generateStaticParams() {
-  return getPublishedTours().map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  const { tours } = await loadPublicContent();
+  return tours.filter((tour) => tour.status === "published").map((tour) => ({ slug: tour.slug }));
 }
 
 export async function generateMetadata({
@@ -24,7 +24,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const tour = getTour(slug);
+  const { tours } = await loadPublicContent();
+  const tour = tours.find((item) => item.slug === slug);
   if (!tour) return { title: "Tour" };
   return { title: tour.title, description: tour.summary };
 }
@@ -35,11 +36,12 @@ export default async function TourDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tour = getTour(slug);
+  const content = await loadPublicContent();
+  const tour = content.tours.find((item) => item.slug === slug);
   if (!tour || tour.status !== "published") notFound();
 
   const destinationRecords = tour.destinationSlugs
-    .map((destinationSlug) => getDestination(destinationSlug))
+    .map((destinationSlug) => content.destinations.find((item) => item.slug === destinationSlug))
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
   const destinations = destinationRecords.map((item) => item.name);
   const placeImages = [

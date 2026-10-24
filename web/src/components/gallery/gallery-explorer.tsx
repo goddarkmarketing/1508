@@ -10,28 +10,34 @@ import {
 } from "@/data/gallery";
 import { cn } from "@/lib/utils";
 
-export function GalleryExplorer() {
+export function GalleryExplorer({
+  albums: albumList = galleryAlbums,
+  photos: photoList = galleryPhotos,
+}: {
+  albums?: typeof galleryAlbums;
+  photos?: typeof galleryPhotos;
+}) {
   const [market, setMarket] = useState<GalleryMarket>("All");
   const [albumId, setAlbumId] = useState<string | null>(null);
 
   const albums = useMemo(
     () =>
-      galleryAlbums.filter(
+      albumList.filter(
         (album) => market === "All" || album.market === market,
       ),
-    [market],
+    [albumList, market],
   );
 
   const photos = useMemo(() => {
-    const pool = galleryPhotos.filter(
+    const pool = photoList.filter(
       (photo) => market === "All" || photo.market === market,
     );
     if (!albumId) return pool;
     return pool.filter((photo) => photo.albumId === albumId);
-  }, [market, albumId]);
+  }, [photoList, market, albumId]);
 
   const activeAlbum = albumId
-    ? galleryAlbums.find((album) => album.id === albumId)
+    ? albumList.find((album) => album.id === albumId)
     : null;
 
   return (
@@ -119,7 +125,7 @@ export function GalleryExplorer() {
 
       <div className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4">
         {photos.map((photo) => (
-          <figure key={photo.src} className="mb-3 break-inside-avoid sm:mb-4">
+          <figure key={photo.id ?? photo.src} className="mb-3 break-inside-avoid sm:mb-4">
             <div className="relative overflow-hidden bg-[#f3f6fa]">
               <Image
                 src={photo.src}

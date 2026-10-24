@@ -11,6 +11,7 @@ export type GalleryAlbum = {
 };
 
 export type GalleryPhoto = {
+  id?: number;
   src: string;
   albumId: string;
   market: Exclude<GalleryMarket, "All">;

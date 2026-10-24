@@ -7,7 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema, type LoginFormValues } from "@/lib/validations";
-import { authenticate, getClientSession, setClientSession } from "@/lib/auth";
+import { adminFetch, getToken, setToken } from "@/lib/admin-api";
+import type { SessionUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,17 +26,20 @@ export function LoginForm() {
   });
 
   useEffect(() => {
-    if (getClientSession()) {
-      router.replace("/admin");
-    }
+    if (!getToken()) return;
+    adminFetch<{ user: SessionUser }>("/auth/me")
+      .then(() => router.replace("/admin"))
+      .catch(() => undefined);
   }, [router]);
 
   async function onSubmit(values: LoginFormValues) {
     setLoading(true);
     try {
-      const user = authenticate(values.email, values.password);
-      if (!user) throw new Error("Email or password is incorrect");
-      setClientSession(user);
+      const data = await adminFetch<{ token: string; user: SessionUser }>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      setToken(data.token);
       toast.success("Signed in");
       router.push("/admin");
     } catch (error) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SiteImage as Image } from "@/components/shared/site-image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,7 +16,9 @@ import {
   getTourMenuByDestination,
   getTourMenuByDuration,
 } from "@/data/tour-menu";
+import { apiBase } from "@/lib/api-base";
 import { cn } from "@/lib/utils";
+import type { Destination, TourPackage } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -46,9 +48,24 @@ export function SiteHeader() {
   const pathname = usePathname();
   const primary = company.contacts[0];
   const secondary = company.contacts[1];
-  const tourDestinations = getTourMenuByDestination();
-  const tourDurations = getTourMenuByDuration();
+  const [tourDestinations, setTourDestinations] = useState(() => getTourMenuByDestination());
+  const [tourDurations, setTourDurations] = useState(() => getTourMenuByDuration());
   const [toursOpen, setToursOpen] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`${apiBase()}/content/catalog`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { destinations?: Destination[]; tours?: TourPackage[] } | null) => {
+        if (!active || !data?.destinations || !data.tours) return;
+        setTourDestinations(getTourMenuByDestination(data.destinations, data.tours));
+        setTourDurations(getTourMenuByDuration(data.tours));
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50" data-feedback-id="site-header">
